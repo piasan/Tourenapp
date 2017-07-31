@@ -1,0 +1,46 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <TextView
+        android:id="@+id/name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:text="Name der Tour"
+        android:textSize="20sp"
+        android:textColor="@android:color/black" />
+
+
+    <RatingBar
+        android:id="@+id/rating"
+        android:isIndicator="true"
+        android:numStars="5"
+        android:rating="0"
+        android:stepSize=".1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/name"
+        android:layout_marginTop="5dp"
+        style="?android:attr/ratingBarStyleSmall"/>
+
+    <TextView
+        android:id="@+id/item_distance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="10km"
+        android:layout_alignParentEnd="true"/>
+
+    <TextView
+        android:id="@+id/item_date"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_below="@+id/item_distance"
+        android:paddingTop="5dp"
+        android:text="1.1.1970"
+        android:layout_alignParentEnd="true"
+        />
+
+</RelativeLayout>

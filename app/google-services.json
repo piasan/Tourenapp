@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "752765139307",
+    "firebase_url": "https://tourenapp-b8d0b.firebaseio.com",
+    "project_id": "tourenapp-b8d0b",
+    "storage_bucket": "tourenapp-b8d0b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:752765139307:android:137b6456bf7a00ee",
+        "android_client_info": {
+          "package_name": "de.hochschule_trier.tourenapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "752765139307-iuml7ig6n62ofl08sml0kd84up1h0cfh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "de.hochschule_trier.tourenapp",
+            "certificate_hash": "94403023e19e25769c31476c607292f500d4eef6"
+          }
+        },
+        {
+          "client_id": "752765139307-0qo3it8433oh9cp4j8h6jdgb2n59j3ci.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAvicbUqIT2ZjWf_CUmy80HjTMB6m8_qdw"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "752765139307-0qo3it8433oh9cp4j8h6jdgb2n59j3ci.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

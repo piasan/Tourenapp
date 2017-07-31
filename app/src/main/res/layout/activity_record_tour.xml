@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/dark_grey_900"
+    android:orientation="vertical"
+    android:weightSum="7">
+
+    <LinearLayout
+        android:id="@+id/layout_rec_active"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:layout_weight="6"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Tour wird aufgezeichnet"
+            android:textColor="@color/blue_grey_500"/>
+
+        <Button
+            android:id="@+id/button_comment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/comment" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_rec_inactive"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:layout_weight="5"
+        android:visibility="visible"
+        tools:visibility="gone">
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Zum starten der Aufzeichnung bitte klicken"
+            android:textColor="@color/blue_grey_500" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/button_stop_rec"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/stop_rec"
+        android:visibility="gone"
+        tools:visibility="visible"/>
+
+    <Button
+        android:id="@+id/button_cancel_rec"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/cancel_rec"
+        android:layout_gravity="center"
+        android:visibility="invisible"
+        tools:visibility="visible"/>
+
+    <Button
+        android:id="@+id/button_start_rec"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/start_rec"
+        android:visibility="visible"
+        tools:visibility="gone"/>
+
+
+
+</LinearLayout>
