@@ -15,6 +15,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.w3c.dom.Text;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -32,6 +34,7 @@ public class CustomAdapter extends ArrayAdapter<Tour>{
         TextView name;
         TextView date;
         RatingBar rating;
+        TextView distance;
     }
 
     public CustomAdapter(ArrayList<Tour> tour, Context context) {
@@ -59,6 +62,7 @@ public class CustomAdapter extends ArrayAdapter<Tour>{
             viewHolder.name = (TextView) convertView.findViewById(R.id.name);
             viewHolder.date = (TextView) convertView.findViewById(R.id.item_date);
             viewHolder.rating = (RatingBar) convertView.findViewById(R.id.rating);
+            viewHolder.distance = (TextView) convertView.findViewById(R.id.item_distance);
 
             result=convertView;
 
@@ -80,6 +84,7 @@ public class CustomAdapter extends ArrayAdapter<Tour>{
         SimpleDateFormat df = new SimpleDateFormat( "dd.MM.yyyy" );
         viewHolder.date.setText(df.format(d));
         viewHolder.rating.setRating((float)tour.getAverageRating());
+        viewHolder.distance.setText(""+tour.getDistance());
         // Return the completed view to render on screen
         return convertView;
     }
