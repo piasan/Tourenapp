@@ -8,7 +8,7 @@ public class TourIndex {
 
         //remove decimals
         double latitude = loc.getLatitude();
-        double longitude =  loc.getLongitude();
+        double longitude = loc.getLongitude();
 
         long index;
 
@@ -17,12 +17,12 @@ public class TourIndex {
 
             //North
             if (latitude >= 0) {
-                index = (89 - (long)latitude) * 360 + (long)longitude; //N 0-89, E 0-179
+                index = (89 - (long) latitude) * 360 + (long) longitude; //N 0-89, E 0-179
             }
 
             //South
             else {
-                index = (90 - (long)latitude) * 360 + (long)longitude; //S 90-179  E 0-179
+                index = (90 - (long) latitude) * 360 + (long) longitude; //S 90-179  E 0-179
             }
 
         }
@@ -32,12 +32,12 @@ public class TourIndex {
 
             //North
             if (latitude >= 0) {
-                index = (89 - (long)latitude) * 360 + (359 + (long)longitude); //N 0-89, W 180-359
+                index = (89 - (long) latitude) * 360 + (359 + (long) longitude); //N 0-89, W 180-359
             }
 
             //South
             else {
-                index = (90 - (long)latitude) * 360 + (359 + (long)longitude); //S 90-179, W 180 -359
+                index = (90 - (long) latitude) * 360 + (359 + (long) longitude); //S 90-179, W 180 -359
             }
 
         }
@@ -45,4 +45,39 @@ public class TourIndex {
         return index;
 
     }
+
+    public long getLeftNeighbor(long index) {
+
+        if (index % 360 != 0)
+            return index - 1;
+        else
+            return index + 359;
+    }
+
+    public long getRightNeighbor(long index) {
+
+        if (index % 360 != 359)
+            return index + 1;
+        else
+            return index - 359;
+    }
+
+    public long getTopNeighbor(long index) {
+
+        if (index > 359)
+            return index - 360;
+        else
+            return -1;
+    }
+
+    public long getBottomNeighbor(long index) {
+
+        if (index < 33659)
+            return index + 360;
+        else
+            return -1;
+
+    }
 }
+
+

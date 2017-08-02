@@ -17,6 +17,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import org.w3c.dom.Text;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -84,9 +85,20 @@ public class CustomAdapter extends ArrayAdapter<Tour>{
         SimpleDateFormat df = new SimpleDateFormat( "dd.MM.yyyy" );
         viewHolder.date.setText(df.format(d));
         viewHolder.rating.setRating((float)tour.getAverageRating());
-        viewHolder.distance.setText(""+tour.getDistance());
+        viewHolder.distance.setText(formatDistance(tour.getDistance()));
         // Return the completed view to render on screen
         return convertView;
+    }
+
+
+    public String formatDistance(double distance){
+
+        if (distance < 1000)
+            return ((int) distance +  "m");
+        else {
+            DecimalFormat d = new DecimalFormat("#0.0");
+            return (d.format(distance / 1000) + "km");
+        }
     }
 }
 
