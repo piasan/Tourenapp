@@ -24,9 +24,8 @@ import java.util.Date;
 
 public class CustomAdapter extends ArrayAdapter<Tour>{
 
-    private ArrayList<Tour> tour;
     Context mContext;
-    private DatabaseReference mDatabase;
+
 
     final private String TAG = "CUSTOM_ADAPTER";
 
@@ -40,7 +39,6 @@ public class CustomAdapter extends ArrayAdapter<Tour>{
 
     public CustomAdapter(ArrayList<Tour> tour, Context context) {
         super(context, R.layout.row_item, tour);
-        this.tour = tour;
         this.mContext=context;
 
     }
@@ -73,9 +71,6 @@ public class CustomAdapter extends ArrayAdapter<Tour>{
             result=convertView;
         }
 
-        // Get an instance of the database
-        final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        mDatabase = database.getReference();
 
 
 

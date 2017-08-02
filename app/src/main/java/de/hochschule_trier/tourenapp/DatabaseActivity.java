@@ -38,7 +38,10 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
 
     //Database Snapshot Array List
     private static ArrayList<Tour> touren;
+    private static ArrayList<Tour> resultList;
     private Tour tour;
+
+    private int radius;
 
     private CustomAdapter tourNameAdapter;
     private ListView listView;
@@ -58,9 +61,10 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
         findViewById(R.id.new_tour_button).setOnClickListener(this);
 
         touren = new ArrayList<>();
+        resultList = new ArrayList<>();
 
         // Set up ListView and Adapter
-        tourNameAdapter = new CustomAdapter(touren, this);
+        tourNameAdapter = new CustomAdapter(resultList, this);
 
         listView = (ListView) findViewById(R.id.list_view);
         listView.setAdapter(tourNameAdapter);
@@ -124,8 +128,8 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
 
         //Check Permissions for GPS Usage
         //If permission is not granted, service can't be started.
-        if ( ContextCompat.checkSelfPermission( this, android.Manifest.permission.ACCESS_COARSE_LOCATION )
-                != PackageManager.PERMISSION_GRANTED ) {
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
 
             ActivityCompat.requestPermissions(this,
                     new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION},
@@ -136,10 +140,13 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
         LocationManager mLocationManager =
                 (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
 
-        currentLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        while (currentLocation == null)
+            currentLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
-       //long index = TourIndex.getIndex(currentLocation);
+        //***********VORÜBERGEHENDE VARIABLE!! SPÄTER LÖSCHEN!!*****************//
+        radius = 10000;
 
+        long index = TourIndex.getIndex(currentLocation);
 
 
         // Read from the database
@@ -152,10 +159,9 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
 
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
 
-
                     tour = snapshot.getValue(Tour.class);
 
-                   touren.add(tour);
+                    touren.add(tour);
                 }
 
 
@@ -185,7 +191,11 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
 
                                     //add distance to tour
                                     double dist = loc.distanceTo(currentLocation);
-                                    touren.get(j).setDistance(dist);
+                                    if (dist < radius) {
+                                        touren.get(j).setDistance(dist);
+                                        resultList.add(touren.get(j));
+                                    }
+
 
                                     tourNameAdapter.notifyDataSetChanged();
 
@@ -211,55 +221,7 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
                 finish();
             }
 
-
-
         });
-
-
-        /*
-        for (int i = 0; i < touren.size(); i++) {
-
-            final int j = i;
-            String tourID = touren.get(i).getTourID();
-
-            //Get first waypoint
-            mDatabase.child("Waypoints").child("Tour" + tourID).limitToFirst(1).
-                    addListenerForSingleValueEvent(new ValueEventListener() {
-
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-
-                            waypoint = new Waypoint(0, 0);
-
-
-                            for (DataSnapshot snapshot1 : dataSnapshot.getChildren()) {
-                                waypoint = snapshot1.getValue(Waypoint.class);
-                            }
-
-                            //Check distance to tour from currentLocation
-                            Location loc = new Location("WP");
-                            loc.setLatitude(waypoint.getLatitude());
-                            loc.setLongitude(waypoint.getLongitude());
-
-                            //add distance to tour
-                            double dist = loc.distanceTo(currentLocation);
-                            touren.get(j).setDistance(dist);
-
-                            tourNameAdapter.notifyDataSetChanged();
-
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError error) {
-                            // Failed to read value
-                            Log.w(TAG, "Failed to read value.", error.toException());
-                            finish();
-                        }
-
-                    });
-
-        }*/
-
 
     }
 
