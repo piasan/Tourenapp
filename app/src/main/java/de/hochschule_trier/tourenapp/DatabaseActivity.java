@@ -12,7 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -42,6 +42,7 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
     private Tour tour;
 
     private int radius;
+    private EditText editRadius;
 
     private CustomAdapter tourNameAdapter;
     private ListView listView;
@@ -55,10 +56,13 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
         // Current Firebase User
         user = FirebaseAuth.getInstance().getCurrentUser();
 
-
         // Buttons
         findViewById(R.id.sign_out_button).setOnClickListener(this);
         findViewById(R.id.new_tour_button).setOnClickListener(this);
+        findViewById(R.id.refresh_button).setOnClickListener(this);
+
+        // Text Field
+        editRadius = (EditText) findViewById(R.id.radiusText);
 
         touren = new ArrayList<>();
         resultList = new ArrayList<>();
@@ -108,7 +112,7 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
     protected void onStart() {
         super.onStart();
 
-        loadDatabase();
+        loadDatabase(10000);
 
     }
 
@@ -124,7 +128,7 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
 
     }
 
-    public void loadDatabase() {
+    public void loadDatabase(int r) {
 
         //Check Permissions for GPS Usage
         //If permission is not granted, service can't be started.
@@ -143,8 +147,7 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
         while (currentLocation == null)
             currentLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
-        //***********VORÜBERGEHENDE VARIABLE!! SPÄTER LÖSCHEN!!*****************//
-        radius = 10000;
+        radius = r;
 
         long index = TourIndex.getIndex(currentLocation);
 
@@ -156,6 +159,7 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 tourNameAdapter.clear();
+                touren.clear();
 
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
 
@@ -163,7 +167,6 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
 
                     touren.add(tour);
                 }
-
 
                 for (int i = 0; i < touren.size(); i++) {
 
@@ -252,6 +255,11 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
                 signOutIntent.putExtra("EXTRA_MESSAGE", message);
                 startActivity(signOutIntent);
                 break;
+
+            case R.id.refresh_button:
+
+                radius = Integer.parseInt(editRadius.getText().toString())*1000;
+                loadDatabase(radius);
 
 
         }

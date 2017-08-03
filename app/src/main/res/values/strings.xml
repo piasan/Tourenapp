@@ -42,6 +42,8 @@
     <string name="tour_description">Tour Description</string>
     <string name="author_name">Author Name</string>
     <string name="available_tours">Available tours</string>
+    <string name="radius">Radius:</string>
+    <string name="km">km</string>
 
     <!-- Dialog messages -->
     <string name="cancel_rec_message">Do you really want to cancel recording? \nAll waypoints will be lost!</string>

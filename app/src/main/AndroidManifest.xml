@@ -22,7 +22,8 @@
 
         <activity
             android:name=".DatabaseActivity"
-            android:theme="@style/ThemeOverlay.MyNoTitleActivity">
+            android:theme="@style/ThemeOverlay.MyNoTitleActivity"
+            android:windowSoftInputMode="adjustPan">
         </activity>
 
         <activity
