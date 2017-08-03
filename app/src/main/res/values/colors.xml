@@ -6,4 +6,7 @@
     <color name="blue_grey_800">#37474F</color>
     <color name="blue_grey_900">#263238</color>
     <color name="dark_grey_900">#1C1C1C</color>
+    <color name="bg_gray_main">#c7c8d1</color>
+    <color name="bg_gray_light">#ebecef</color>
+    <color name="bg_gray_dark">#8f91a3</color>
 </resources>

@@ -51,6 +51,11 @@
             android:theme="@style/ThemeOverlay.MyNoTitleActivity">
         </activity>
 
+        <activity
+            android:name=".SearchActivity"
+            android:theme="@style/ThemeOverlay.MyNoTitleActivity">
+        </activity>
+
         <service android:name=".GPSService"/>
 
     </application>

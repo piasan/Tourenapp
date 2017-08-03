@@ -17,4 +17,20 @@
     <string name="cancel">Abbrechen</string>
     <string name="start_rec">Aufzeichnung Starten</string>
     <string name="stop_rec">Aufzeichnung Beenden</string>
+    <string name="cancel_rec">Aufzeichnung abbrechen</string>
+    <string name="cancel_rec_title">Aufzeichnung abbrechen?</string>
+    <string name="comment">Kommentar</string>
+    <string name="km">km</string>
+    <string name="maps">Tour auf Karte anzeigen</string>
+    <string name="no">Nein</string>
+    <string name="no_comment">Kommentar darf nicht leer sein</string>
+    <string name="no_description">Beschreibung darf nicht leer sein</string>
+    <string name="no_name">Name darf nicht leer sein</string>
+    <string name="radius">"Umkreis: "</string>
+    <string name="yes">Ja</string>
+    <string name="desc_google_icon">Google Logo</string>
+    <string name="error_null_person">[...]</string>
+    <string name="google_maps_key">[...]</string>
+    <string name="ok">OK</string>
+    <string name="search">Erweiterte Suche</string>
 </resources>

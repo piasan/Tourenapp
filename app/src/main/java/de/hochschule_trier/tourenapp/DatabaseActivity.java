@@ -32,6 +32,7 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
 
     private final static String TAG = "DatabaseActivity";
     private final static int MY_PERMISSION_ACCESS_COARSE_LOCATION = 11;
+    private final static int SEARCH_REQUEST_CODE = 4;
 
     private DatabaseReference mDatabase;
     private FirebaseUser user;
@@ -65,6 +66,7 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
         findViewById(R.id.sign_out_button).setOnClickListener(this);
         findViewById(R.id.new_tour_button).setOnClickListener(this);
         findViewById(R.id.refresh_button).setOnClickListener(this);
+        findViewById(R.id.searchTextView).setOnClickListener(this);
 
         // Text Field
         editRadius = (EditText) findViewById(R.id.radiusText);
@@ -263,6 +265,30 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
     }
 
 
+    // Get message from other Activity
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch (requestCode){
+
+            case SEARCH_REQUEST_CODE:
+
+                if(resultCode == RESULT_OK){
+
+                    int r = data.getIntExtra("Radius", 10);
+
+                    editRadius.setText(""+r);
+                    loadDatabase(r * 1000);
+                }
+
+
+        }
+
+
+    }
+
+
     // On Click Listener
     @Override
     public void onClick(View v) {
@@ -290,8 +316,14 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
                 used = true;
                 radius = Integer.parseInt(editRadius.getText().toString()) * 1000;
                 loadDatabase(radius);
+                break;
 
+            case R.id.searchTextView:
 
+                Intent searchIntent = new Intent(this, SearchActivity.class);
+                startActivityForResult(searchIntent, SEARCH_REQUEST_CODE);
+
+                break;
         }
     }
 

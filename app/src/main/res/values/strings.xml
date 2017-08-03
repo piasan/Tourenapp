@@ -8,7 +8,7 @@
     <string name="signing_in">Signing in…</string>
     <string name="signed_out">Signed out</string>
     <string name="signed_in_err">"Error: please check logs."</string>
-    <string name="error_null_person" translatable="false">
+    <string name="error_null_person">
         Error: Plus.PeopleApi.getCurrentPerson returned null. Ensure that the Google+ API is
         enabled for your project, you have a properly configured google-services.json file
         and that your device has an internet connection.
@@ -26,7 +26,7 @@
     <!-- Button labels -->
     <string name="sign_out">Sign Out</string>
     <string name="refresh_token">Get Fresh Token</string>
-    <string name="ok" translatable="false">OK</string>
+    <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
@@ -36,6 +36,7 @@
     <string name="stop_rec">Stop Recording</string>
     <string name="maps">Show Tour on Map</string>
     <string name="comment">Comment</string>
+    <string name="search">Search</string>
 
     <!-- TextView labels -->
     <string name="tour_name">Tour Name</string>
@@ -55,7 +56,7 @@
     <string name="no_description">Description can\'t be empty</string>
 
     <!-- Content Description for images -->
-    <string name="desc_google_icon" translatable="false">Google Logo</string>
+    <string name="desc_google_icon">Google Logo</string>
 
     <!-- Rationale for asking for Contacts -->
     <string name="contacts_permission_rationale">Contacts access is needed in order to retrieve your email address.</string>

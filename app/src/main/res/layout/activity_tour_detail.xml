@@ -5,7 +5,7 @@
     android:orientation="vertical"
     android:padding="25dp"
     android:weightSum="5"
-    android:background="@color/blue_grey_500">
+    android:background="@color/bg_gray_main">
 
     <TextView
         android:id="@+id/tourName"

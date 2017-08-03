@@ -3,7 +3,8 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="25dp"
-    android:weightSum="5">
+    android:weightSum="5"
+    android:background="@color/bg_gray_main">
 
 
     <TextView
@@ -23,6 +24,7 @@
         android:inputType="textMultiLine"
         android:scrollHorizontally="false"
         android:layout_marginBottom="20dp"
+        android:background="@color/bg_gray_light"
         android:layout_weight="3" />
 
     <LinearLayout
