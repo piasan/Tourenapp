@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -24,6 +25,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+
+import javax.xml.datatype.Duration;
 
 public class DatabaseActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener {
 
@@ -43,6 +46,8 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
 
     private int radius;
     private EditText editRadius;
+
+    private boolean used;
 
     private CustomAdapter tourNameAdapter;
     private ListView listView;
@@ -67,13 +72,6 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
         touren = new ArrayList<>();
         resultList = new ArrayList<>();
 
-        // Set up ListView and Adapter
-        tourNameAdapter = new CustomAdapter(resultList, this);
-
-        listView = (ListView) findViewById(R.id.list_view);
-        listView.setAdapter(tourNameAdapter);
-        listView.setOnItemClickListener(this);
-
 
         // Get an instance of the database
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -92,6 +90,7 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
                 if (currentUser == null) {
                     createNewUser();
                 } else {
+                    //if User exists, update last Login
                     mDatabase.child("Users").child(user.getUid()).child("lastLogin").setValue(System.currentTimeMillis());
                 }
 
@@ -106,14 +105,48 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
         });
 
 
+        if (savedInstanceState != null && !used) {
+                resultList = savedInstanceState.getParcelableArrayList("Touren");
+        }
+
     }
 
     @Override
     protected void onStart() {
         super.onStart();
 
-        loadDatabase(10000);
+        // Set up ListView and Adapter
+        tourNameAdapter = new CustomAdapter(resultList, this);
 
+        listView = (ListView) findViewById(R.id.list_view);
+        listView.setAdapter(tourNameAdapter);
+        listView.setOnItemClickListener(this);
+
+        if (resultList.size() > 0) {
+            //tourNameAdapter.addAll(resultList);
+            tourNameAdapter.notifyDataSetChanged();
+            Toast.makeText(this, "savedInstanceState geladen", Toast.LENGTH_LONG).show();
+            used = true;
+        } else {
+
+            radius = Integer.parseInt(editRadius.getText().toString()) * 1000;
+            loadDatabase(radius);
+        }
+
+    }
+
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putParcelableArrayList("Touren", resultList);
+        outState.putBoolean("saved", true);
+        super.onSaveInstanceState(outState);
     }
 
 
@@ -160,6 +193,7 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
 
                 tourNameAdapter.clear();
                 touren.clear();
+                resultList.clear();
 
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
 
@@ -229,12 +263,6 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
     }
 
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-
-    }
-
     // On Click Listener
     @Override
     public void onClick(View v) {
@@ -254,11 +282,13 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
 
                 signOutIntent.putExtra("EXTRA_MESSAGE", message);
                 startActivity(signOutIntent);
+                finish();
                 break;
 
             case R.id.refresh_button:
 
-                radius = Integer.parseInt(editRadius.getText().toString())*1000;
+                used = true;
+                radius = Integer.parseInt(editRadius.getText().toString()) * 1000;
                 loadDatabase(radius);
 
 

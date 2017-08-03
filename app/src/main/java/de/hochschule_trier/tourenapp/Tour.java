@@ -1,6 +1,9 @@
 package de.hochschule_trier.tourenapp;
 
-public class Tour {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Tour implements Parcelable{
 
 
     private String tourID;
@@ -25,6 +28,38 @@ public class Tour {
         this.active = true;
         this.tourID = tourID;
         this.description = tourDescription;
+    }
+
+    //Constructor from parcel
+    public Tour(Parcel parcel){
+        this.tourID = parcel.readString();
+        this.tourName = parcel.readString();
+        this.authorName = parcel.readString();
+        this.distance = parcel.readDouble();
+        this.timestamp = parcel.readLong();
+        this.lastUpdate = parcel.readLong();
+        this.active = parcel.readInt() != 0;
+        this.averageRating = parcel.readDouble();
+        this.description = parcel.readString();
+
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags){
+        dest.writeString(tourID);
+        dest.writeString(tourName);
+        dest.writeString(authorName);
+        dest.writeDouble(distance);
+        dest.writeLong(timestamp);
+        dest.writeLong(lastUpdate);
+        dest.writeInt((active ? 1 : 0));
+        dest.writeDouble(averageRating);
+        dest.writeString(description);
     }
 
 
