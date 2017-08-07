@@ -80,7 +80,14 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
 
                posOrder = orderList.get(position);
 
-               Long ID = id;
+               if (orderList.get(position).equals(getResources().getString(R.string.rating)))
+                   posOrder = "averageRating";
+                else if (orderList.get(position).equals(getResources().getString(R.string.date)))
+                   posOrder = "date";
+                else if (orderList.get(position).equals(getResources().getString(R.string.last_update)))
+                   posOrder = "lastUpdate";
+                else if (orderList.get(position).equals(getResources().getString(R.string.distance)))
+                   posOrder = "tourID";
 
             }
 

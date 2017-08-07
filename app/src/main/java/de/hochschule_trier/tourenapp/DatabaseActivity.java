@@ -23,6 +23,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class DatabaseActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener {
@@ -109,11 +110,15 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
         });
 
 
-        if (savedInstanceState != null && !used) {
+        if (savedInstanceState != null) {
+            if (!used)
                 resultList = savedInstanceState.getParcelableArrayList("Touren");
+            orderBy = savedInstanceState.getString("OrderBy");
+            direction = savedInstanceState.getString("Direction");
         }
 
     }
+
 
     @Override
     protected void onStart() {
@@ -126,6 +131,13 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
         listView.setAdapter(tourNameAdapter);
         listView.setOnItemClickListener(this);
 
+        if (orderBy == null) {
+            orderBy = "tourID";
+        }
+        if (direction == null) {
+            direction = "ascending";
+        }
+
         if (resultList.size() > 0) {
             tourNameAdapter.notifyDataSetChanged();
             used = true;
@@ -134,6 +146,7 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
             radius = Integer.parseInt(editRadius.getText().toString()) * 1000;
             loadDatabase(radius, orderBy, direction, tourName, authorName);
         }
+
 
     }
 
@@ -148,6 +161,9 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
     protected void onSaveInstanceState(Bundle outState) {
         outState.putParcelableArrayList("Touren", resultList);
         outState.putBoolean("saved", true);
+        outState.putString("OrderBy", orderBy);
+        outState.putString("Direction", direction);
+
         super.onSaveInstanceState(outState);
     }
 
@@ -163,7 +179,7 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
 
     }
 
-    public void loadDatabase(int r, String orderBy, String direction, String tourName, String authorName) {
+    public void loadDatabase(int r, final String orderBy, final String direction, String tourName, String authorName) {
 
         //Check Permissions for GPS Usage
         //If permission is not granted, service can't be started.
@@ -188,7 +204,7 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
 
 
         // Read from the database
-        mDatabase.child("Touren").orderByChild("tourID").addListenerForSingleValueEvent(new ValueEventListener() {
+        mDatabase.child("Touren").orderByChild(orderBy).addListenerForSingleValueEvent(new ValueEventListener() {
 
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -231,8 +247,17 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
                                     //add distance to tour
                                     double dist = loc.distanceTo(currentLocation);
                                     if (dist < radius) {
+
                                         touren.get(j).setDistance(dist);
-                                        resultList.add(touren.get(j));
+
+                                        if (orderBy.equals("tourID")) {
+                                            sortByDistance(resultList, touren.get(j));
+                                        } else {
+                                            if (direction.equals("descending"))
+                                                resultList.add(0, touren.get(j));
+                                            else
+                                                resultList.add(touren.get(j));
+                                        }
                                     }
 
 
@@ -264,17 +289,37 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
 
     }
 
+    public ArrayList<Tour> sortByDistance(ArrayList<Tour> list, Tour tour) {
+
+        int i = 0;
+
+        if (direction.equals("ascending")) {
+
+            while (i < list.size() && tour.getDistance() > list.get(i).getDistance())
+                i++;
+        } else
+
+            while (i < list.size() && tour.getDistance() < list.get(i).getDistance()) {
+                i++;
+            }
+
+
+        list.add(i, tour);
+
+        return list;
+    }
+
 
     // Get message from other Activity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        switch (requestCode){
+        switch (requestCode) {
 
             case SEARCH_REQUEST_CODE:
 
-                if(resultCode == RESULT_OK){
+                if (resultCode == RESULT_OK) {
 
                     int r = data.getIntExtra("Radius", 10);
                     direction = data.getStringExtra("Direction");
@@ -282,7 +327,7 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
                     tourName = data.getStringExtra("TourName");
                     authorName = data.getStringExtra("AuthorName");
 
-                    editRadius.setText(""+r);
+                    editRadius.setText("" + r);
                     loadDatabase(r * 1000, orderBy, direction, tourName, authorName);
                 }
 
