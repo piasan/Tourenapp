@@ -32,5 +32,13 @@
     <string name="error_null_person">[...]</string>
     <string name="google_maps_key">[...]</string>
     <string name="ok">OK</string>
-    <string name="search">Erweiterte Suche</string>
+    <string name="search">Suchen</string>
+    <string name="distance">Entfernung</string>
+    <string name="last_update">Letzte Aktualisierung</string>
+    <string name="order">Sortieren nach:</string>
+    <string name="rating">Bewertung</string>
+    <string name="asc">aufsteigend</string>
+    <string name="desc">absteigend</string>
+    <string name="date">Datum</string>
+    <string name="extsearch">Erweiterte Suche</string>
 </resources>

@@ -14,7 +14,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -25,8 +24,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-
-import javax.xml.datatype.Duration;
 
 public class DatabaseActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener {
 
@@ -47,6 +44,11 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
 
     private int radius;
     private EditText editRadius;
+
+    private String orderBy;
+    private String direction;
+    private String tourName;
+    private String authorName;
 
     private boolean used;
 
@@ -125,14 +127,12 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
         listView.setOnItemClickListener(this);
 
         if (resultList.size() > 0) {
-            //tourNameAdapter.addAll(resultList);
             tourNameAdapter.notifyDataSetChanged();
-            Toast.makeText(this, "savedInstanceState geladen", Toast.LENGTH_LONG).show();
             used = true;
         } else {
 
             radius = Integer.parseInt(editRadius.getText().toString()) * 1000;
-            loadDatabase(radius);
+            loadDatabase(radius, orderBy, direction, tourName, authorName);
         }
 
     }
@@ -163,7 +163,7 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
 
     }
 
-    public void loadDatabase(int r) {
+    public void loadDatabase(int r, String orderBy, String direction, String tourName, String authorName) {
 
         //Check Permissions for GPS Usage
         //If permission is not granted, service can't be started.
@@ -188,7 +188,7 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
 
 
         // Read from the database
-        mDatabase.child("Touren").addListenerForSingleValueEvent(new ValueEventListener() {
+        mDatabase.child("Touren").orderByChild("tourID").addListenerForSingleValueEvent(new ValueEventListener() {
 
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -277,9 +277,13 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
                 if(resultCode == RESULT_OK){
 
                     int r = data.getIntExtra("Radius", 10);
+                    direction = data.getStringExtra("Direction");
+                    orderBy = data.getStringExtra("OrderBy");
+                    tourName = data.getStringExtra("TourName");
+                    authorName = data.getStringExtra("AuthorName");
 
                     editRadius.setText(""+r);
-                    loadDatabase(r * 1000);
+                    loadDatabase(r * 1000, orderBy, direction, tourName, authorName);
                 }
 
 
@@ -315,12 +319,15 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
 
                 used = true;
                 radius = Integer.parseInt(editRadius.getText().toString()) * 1000;
-                loadDatabase(radius);
+                loadDatabase(radius, orderBy, direction, tourName, authorName);
                 break;
 
             case R.id.searchTextView:
 
                 Intent searchIntent = new Intent(this, SearchActivity.class);
+                String r = editRadius.getText().toString();
+                searchIntent.putExtra("Radius", r);
+
                 startActivityForResult(searchIntent, SEARCH_REQUEST_CODE);
 
                 break;

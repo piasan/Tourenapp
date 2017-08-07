@@ -37,6 +37,7 @@
     <string name="maps">Show Tour on Map</string>
     <string name="comment">Comment</string>
     <string name="search">Search</string>
+    <string name="extsearch">Extended Search</string>
 
     <!-- TextView labels -->
     <string name="tour_name">Tour Name</string>
@@ -45,10 +46,22 @@
     <string name="available_tours">Available tours</string>
     <string name="radius">Radius:</string>
     <string name="km">km</string>
+    <string name="order">Order by:</string>
+
+
+    <!-- Spinner contents -->
+    <string name="rating">Rating</string>
+    <string name="distance">Distance</string>
+    <string name="date">Date</string>
+    <string name="last_update">Last update</string>
+    <string name="asc">ascending</string>
+    <string name="desc">descending</string>
+
 
     <!-- Dialog messages -->
     <string name="cancel_rec_message">Do you really want to cancel recording? \nAll waypoints will be lost!</string>
     <string name="cancel_rec_title">Cancel recording?</string>
+
 
     <!-- Alert messages -->
     <string name="no_comment">Comment can\'t be empty</string>
