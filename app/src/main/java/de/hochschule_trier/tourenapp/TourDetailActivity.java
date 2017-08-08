@@ -7,6 +7,7 @@ import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,6 +34,8 @@ public class TourDetailActivity extends AppCompatActivity implements View.OnClic
     private TextView textViewLastUpdate;
     private RatingBar ratingBar;
     private EditText editComment;
+
+    private LinearLayout layout;
 
     private ArrayList<Waypoint> waypoints;
 
@@ -62,9 +65,20 @@ public class TourDetailActivity extends AppCompatActivity implements View.OnClic
         ratingBar = (RatingBar) findViewById(R.id.rating);
         editComment = (EditText) findViewById(R.id.editComment);
 
+        layout = (LinearLayout) findViewById(R.id.ratingLayout);
+
         findViewById(R.id.buttonMaps).setOnClickListener(this);
         findViewById(R.id.rate).setOnClickListener(this);
         findViewById(R.id.ok_button).setOnClickListener(this);
+        findViewById(R.id.cancel_button).setOnClickListener(this);
+
+        if (savedInstanceState != null) {
+
+            editComment.setText(savedInstanceState.getString("comment"));
+            if (savedInstanceState.getBoolean("visible"))
+                layout.setVisibility(View.VISIBLE);
+
+        }
 
 
         // Get an instance of the database
@@ -80,6 +94,15 @@ public class TourDetailActivity extends AppCompatActivity implements View.OnClic
 
         //Retrieve Waypoint Data
         addWaypointData();
+
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+
+        savedInstanceState.putString("comment", editComment.getText().toString());
+        savedInstanceState.putBoolean("visible", layout.getVisibility() == View.VISIBLE);
 
     }
 
@@ -141,22 +164,6 @@ public class TourDetailActivity extends AppCompatActivity implements View.OnClic
 
     }
 
-    public void addListenerOnRatingBar() {
-
-        ratingBar = (RatingBar) findViewById(R.id.rating);
-
-        ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
-            public void onRatingChanged(RatingBar ratingBar, float rating,
-                                        boolean fromUser) {
-
-                Comment comment = new Comment((long) rating, user.getUid());
-
-                mDatabase.child("Comments").child("Tour" + tourID).push().setValue(comment);
-
-            }
-        });
-    }
-
 
     public void onClick(View v) {
 
@@ -176,7 +183,7 @@ public class TourDetailActivity extends AppCompatActivity implements View.OnClic
 
             case R.id.rate:
 
-                findViewById(R.id.ratingLayout).setVisibility(View.VISIBLE);
+                layout.setVisibility(View.VISIBLE);
                 break;
 
             case R.id.ok_button:
@@ -205,13 +212,17 @@ public class TourDetailActivity extends AppCompatActivity implements View.OnClic
 
                     mDatabase.child("Comments").child("Tour" + tourID).push().setValue(comment);
 
-                    findViewById(R.id.ratingLayout).setVisibility(View.GONE);
-
+                    layout.setVisibility(View.GONE);
 
                 }
 
-
                 break;
+
+            case R.id.cancel_button:
+
+                editComment.setText("");
+                ratingBar.setRating(0);
+                layout.setVisibility(View.GONE);
 
         }
 

@@ -3,7 +3,9 @@ package de.hochschule_trier.tourenapp;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class Tour implements Parcelable{
+import java.util.ArrayList;
+
+public class Tour implements Parcelable {
 
 
     private String tourID;
@@ -15,12 +17,14 @@ public class Tour implements Parcelable{
     private boolean active;
     private double averageRating;
     private String description;
+    private ArrayList<Boolean> tags;
 
 
-    public Tour(){}
+    public Tour() {
+    }
 
     //Constructor
-    public Tour(String tourName, String authorName, long timestamp, String tourID, String tourDescription){
+    public Tour(String tourName, String authorName, long timestamp, String tourID, String tourDescription, ArrayList<Boolean> tags) {
         this.tourName = tourName;
         this.authorName = authorName;
         this.timestamp = timestamp;
@@ -28,10 +32,11 @@ public class Tour implements Parcelable{
         this.active = true;
         this.tourID = tourID;
         this.description = tourDescription;
+        this.tags = tags;
     }
 
     //Constructor from parcel
-    public Tour(Parcel parcel){
+    public Tour(Parcel parcel) {
         this.tourID = parcel.readString();
         this.tourName = parcel.readString();
         this.authorName = parcel.readString();
@@ -41,6 +46,7 @@ public class Tour implements Parcelable{
         this.active = parcel.readInt() != 0;
         this.averageRating = parcel.readDouble();
         this.description = parcel.readString();
+        this.tags = parcel.readArrayList(null);
 
     }
 
@@ -50,7 +56,7 @@ public class Tour implements Parcelable{
     }
 
     @Override
-    public void writeToParcel(Parcel dest, int flags){
+    public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(tourID);
         dest.writeString(tourName);
         dest.writeString(authorName);
@@ -60,7 +66,19 @@ public class Tour implements Parcelable{
         dest.writeInt((active ? 1 : 0));
         dest.writeDouble(averageRating);
         dest.writeString(description);
+        dest.writeList(tags);
     }
+
+    public static final Parcelable.Creator<Tour> CREATOR
+            = new Parcelable.Creator<Tour>() {
+        public Tour createFromParcel(Parcel in) {
+            return new Tour(in);
+        }
+
+        public Tour[] newArray(int size) {
+            return new Tour[size];
+        }
+    };
 
 
     //Getters
@@ -68,7 +86,7 @@ public class Tour implements Parcelable{
         return authorName;
     }
 
-    public  String getTourName(){
+    public String getTourName() {
         return tourName;
     }
 
@@ -98,6 +116,10 @@ public class Tour implements Parcelable{
 
     public String getDescription() {
         return description;
+    }
+
+    public ArrayList<Boolean> getTags() {
+        return tags;
     }
 
     //Setters
@@ -135,5 +157,9 @@ public class Tour implements Parcelable{
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public void setTags(ArrayList<Boolean> tags) {
+        this.tags = tags;
     }
 }

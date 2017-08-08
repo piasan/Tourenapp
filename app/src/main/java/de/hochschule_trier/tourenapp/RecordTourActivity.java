@@ -20,6 +20,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.ArrayList;
+
 public class RecordTourActivity extends AppCompatActivity implements View.OnClickListener{
 
     private static final int MY_PERMISSION_ACCESS_COARSE_LOCATION = 11;
@@ -159,8 +161,9 @@ public class RecordTourActivity extends AppCompatActivity implements View.OnClic
     private void createNewTour(String tourName, String tourDescription, String authorName) {
 
         long timestamp = System.currentTimeMillis();
+        ArrayList<Boolean> liste = new ArrayList<>();
 
-        Tour tour = new Tour(tourName, authorName, timestamp, tourID, tourDescription);
+        Tour tour = new Tour(tourName, authorName, timestamp, tourID, tourDescription, liste);
 
         mDatabase.child("Touren").child(tourID).setValue(tour);
 

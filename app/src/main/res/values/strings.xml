@@ -61,6 +61,21 @@
     <string name="asc">ascending</string>
     <string name="desc">descending</string>
 
+    <!-- Tag List -->
+    <string-array name="tag_list">
+        <item>By Foot</item>
+        <item>By Bike</item>
+        <item>With Dogs</item>
+        <item>Accessible with baby carriages/wheelchairs</item>
+        <item>Contains unmade roads</item>
+        <item>Great difference in altitude</item>
+        <item>Food/Drink</item>
+        <item>Multi-Tour</item>
+        <item>Contains Mini Games</item>
+        <item>Restricted access</item>
+
+    </string-array>
+
 
     <!-- Dialog messages -->
     <string name="cancel_rec_message">Do you really want to cancel recording? \nAll waypoints will be lost!</string>

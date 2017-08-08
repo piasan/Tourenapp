@@ -64,8 +64,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginBottom="20dp">
+                android:layout_marginBottom="20dp"
+                android:orientation="horizontal">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -82,17 +82,17 @@
                 android:id="@+id/rate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/rate"
                 android:layout_marginBottom="10dp"
-                android:textSize="20sp"/>
+                android:text="@string/rate"
+                android:textSize="20sp" />
 
             <LinearLayout
                 android:id="@+id/ratingLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@drawable/border_dark"
                 android:orientation="vertical"
                 android:padding="10dp"
-                android:background="@drawable/border_dark"
                 android:visibility="gone"
                 tools:visivility="visible">
 
@@ -108,28 +108,44 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
-                    android:text="@string/commentopt"
                     android:focusable="true"
-                    android:focusableInTouchMode="true"/>
+                    android:focusableInTouchMode="true"
+                    android:text="@string/commentopt" />
 
                 <EditText
                     android:id="@+id/editComment"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:minLines="10"
                     android:layout_marginBottom="20dp"
-                    android:inputType="textMultiLine"
-                    android:gravity="top|start"
                     android:background="@drawable/border_light"
-                    android:scrollHorizontally="false"/>
+                    android:gravity="top|start"
+                    android:inputType="textMultiLine"
+                    android:minLines="10"
+                    android:scrollHorizontally="false" />
 
-                <Button
-                    android:id="@+id/ok_button"
-                    android:layout_width="wrap_content"
+
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="@string/ok"
-                    android:layout_marginBottom="20dp"/>
+                    android:layout_marginBottom="20dp"
+                    android:orientation="horizontal"
+                    android:gravity="center">
+
+                    <Button
+                        android:id="@+id/ok_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="@string/ok" />
+
+                    <Button
+                        android:id="@+id/cancel_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="@string/cancel" />
+
+                </LinearLayout>
 
             </LinearLayout>
 

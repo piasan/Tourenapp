@@ -23,7 +23,7 @@
         <activity
             android:name=".DatabaseActivity"
             android:theme="@style/ThemeOverlay.MyNoTitleActivity"
-            android:windowSoftInputMode="adjustPan">
+            android:windowSoftInputMode="adjustPan|stateUnchanged">
         </activity>
 
         <activity
@@ -44,7 +44,7 @@
         <activity
             android:name=".TourDetailActivity"
             android:theme="@style/ThemeOverlay.MyNoTitleActivity"
-            android:windowSoftInputMode="adjustPan">
+            android:windowSoftInputMode="adjustResize|stateUnchanged">
         </activity>
 
         <activity
@@ -55,7 +55,7 @@
         <activity
             android:name=".SearchActivity"
             android:theme="@style/ThemeOverlay.MyNoTitleActivity"
-            android:windowSoftInputMode="adjustPan">
+            android:windowSoftInputMode="adjustPan|stateUnchanged">
         </activity>
 
         <service android:name=".GPSService"/>
