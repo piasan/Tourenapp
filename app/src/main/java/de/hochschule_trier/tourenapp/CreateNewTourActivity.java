@@ -58,7 +58,7 @@ public class CreateNewTourActivity extends AppCompatActivity implements View.OnC
         String[] tagList = getResources().getStringArray(R.array.tag_list);
         ViewGroup checkboxContainer = (ViewGroup) findViewById(R.id.checkBoxLayout);
 
-        checkboxes = new ArrayList<CheckBox>();
+        checkboxes = new ArrayList<>();
         for (int i = 0; i < tagList.length; i++){
             CheckBox checkbox = new CheckBox(this);
             checkbox.setText(tagList[i]);
@@ -84,10 +84,17 @@ public class CreateNewTourActivity extends AppCompatActivity implements View.OnC
                     Toast.makeText(CreateNewTourActivity.this, R.string.no_description, Toast.LENGTH_LONG).show();
                 } else {
 
+                    boolean[] tags = new boolean[checkboxes.size()];
+
+                    for (int i = 0; i < checkboxes.size(); i++){
+                        tags[i] = (checkboxes.get(i).isChecked());
+                    }
+
 
                     Intent intent = new Intent();
                     intent.putExtra("TOUR_NAME", tourName);
                     intent.putExtra("TOUR_DESCRIPTION", tourDescription);
+                    intent.putExtra("TAGS", tags);
 
                     setResult(RESULT_OK, intent);
                     finish();

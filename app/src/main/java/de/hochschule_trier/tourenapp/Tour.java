@@ -3,7 +3,7 @@ package de.hochschule_trier.tourenapp;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class Tour implements Parcelable {
 
@@ -17,14 +17,13 @@ public class Tour implements Parcelable {
     private boolean active;
     private double averageRating;
     private String description;
-    private ArrayList<Boolean> tags;
 
 
     public Tour() {
     }
 
     //Constructor
-    public Tour(String tourName, String authorName, long timestamp, String tourID, String tourDescription, ArrayList<Boolean> tags) {
+    public Tour(String tourName, String authorName, long timestamp, String tourID, String tourDescription) {
         this.tourName = tourName;
         this.authorName = authorName;
         this.timestamp = timestamp;
@@ -32,7 +31,6 @@ public class Tour implements Parcelable {
         this.active = true;
         this.tourID = tourID;
         this.description = tourDescription;
-        this.tags = tags;
     }
 
     //Constructor from parcel
@@ -46,7 +44,6 @@ public class Tour implements Parcelable {
         this.active = parcel.readInt() != 0;
         this.averageRating = parcel.readDouble();
         this.description = parcel.readString();
-        this.tags = parcel.readArrayList(null);
 
     }
 
@@ -66,7 +63,6 @@ public class Tour implements Parcelable {
         dest.writeInt((active ? 1 : 0));
         dest.writeDouble(averageRating);
         dest.writeString(description);
-        dest.writeList(tags);
     }
 
     public static final Parcelable.Creator<Tour> CREATOR
@@ -118,9 +114,6 @@ public class Tour implements Parcelable {
         return description;
     }
 
-    public ArrayList<Boolean> getTags() {
-        return tags;
-    }
 
     //Setters
     public void setTourName(String tourName) {
@@ -159,7 +152,4 @@ public class Tour implements Parcelable {
         this.description = description;
     }
 
-    public void setTags(ArrayList<Boolean> tags) {
-        this.tags = tags;
-    }
 }

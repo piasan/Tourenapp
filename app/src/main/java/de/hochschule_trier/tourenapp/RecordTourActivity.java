@@ -21,6 +21,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class RecordTourActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -108,8 +110,9 @@ public class RecordTourActivity extends AppCompatActivity implements View.OnClic
 
                     String tourName = data.getStringExtra("TOUR_NAME");
                     String tourDescription = data.getStringExtra("TOUR_DESCRIPTION");
+                    boolean[] tags = data.getBooleanArrayExtra("TAGS");
 
-                    createNewTour(tourName, tourDescription, user.getUid());
+                    createNewTour(tourName, tourDescription, user.getUid(), tags);
 
                     finish();
 
@@ -158,14 +161,19 @@ public class RecordTourActivity extends AppCompatActivity implements View.OnClic
 
     }
 
-    private void createNewTour(String tourName, String tourDescription, String authorName) {
+    private void createNewTour(String tourName, String tourDescription, String authorName, boolean[] tags) {
 
         long timestamp = System.currentTimeMillis();
-        ArrayList<Boolean> liste = new ArrayList<>();
 
-        Tour tour = new Tour(tourName, authorName, timestamp, tourID, tourDescription, liste);
+        Tour tour = new Tour(tourName, authorName, timestamp, tourID, tourDescription);
+
+        String[] tagList = getResources().getStringArray(R.array.tag_list);
 
         mDatabase.child("Touren").child(tourID).setValue(tour);
+
+        for(int i = 0; i < tags.length; i++){
+            mDatabase.child("Touren").child(tourID).child(tagList[i]).setValue(tags[i]);
+        }
 
     }
 
