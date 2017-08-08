@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/dark_grey_900"
+    android:background="@color/bg_gray_dark"
     android:orientation="vertical"
     android:weightSum="7">
 
@@ -21,7 +21,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Tour wird aufgezeichnet"
-            android:textColor="@color/blue_grey_500"/>
+            android:textColor="@color/bg_gray_light"/>
 
         <Button
             android:id="@+id/button_comment"
@@ -46,7 +46,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Zum starten der Aufzeichnung bitte klicken"
-            android:textColor="@color/blue_grey_500" />
+            android:textColor="@color/bg_gray_light" />
 
     </LinearLayout>
 

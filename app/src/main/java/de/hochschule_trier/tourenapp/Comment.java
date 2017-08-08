@@ -18,6 +18,11 @@ public class Comment {
 
     }
 
+    public Comment(long rating, String author){
+        this.rating = rating;
+        this.author = author;
+    }
+
     //Getters
     public String getCommentary() {
         return commentary;

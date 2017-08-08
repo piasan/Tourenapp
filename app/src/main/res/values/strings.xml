@@ -41,12 +41,16 @@
 
     <!-- TextView labels -->
     <string name="tour_name">Tour Name</string>
-    <string name="tour_description">Tour Description</string>
+    <string name="tour_description">Description</string>
     <string name="author_name">Author Name</string>
     <string name="available_tours">Available tours</string>
     <string name="radius">Radius:</string>
     <string name="km">km</string>
     <string name="order">Order by:</string>
+    <string name="createdon">Created on: </string>
+    <string name="updated">Last update on: </string>
+    <string name="commentopt">Comment (optional)</string>
+    <string name="rate">Rate Tour</string>
 
 
     <!-- Spinner contents -->
