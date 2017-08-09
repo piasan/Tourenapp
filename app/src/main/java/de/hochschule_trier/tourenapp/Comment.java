@@ -1,6 +1,9 @@
 package de.hochschule_trier.tourenapp;
 
-public class Comment {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Comment implements Parcelable{
 
     private String commentary;
     private long rating;
@@ -22,6 +25,41 @@ public class Comment {
         this.rating = rating;
         this.author = author;
     }
+
+    //Constructor from parcel
+    public Comment(Parcel parcel) {
+        this.commentary = parcel.readString();
+        this.timestamp = parcel.readLong();
+        this.author = parcel.readString();
+        this.rating = parcel.readLong();
+
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(timestamp);
+        dest.writeString(commentary);
+        dest.writeString(author);
+        dest.writeLong(rating);
+
+    }
+
+    public static final Parcelable.Creator<Comment> CREATOR
+            = new Parcelable.Creator<Comment>() {
+        public Comment createFromParcel(Parcel in) {
+            return new Comment(in);
+        }
+
+        public Comment[] newArray(int size) {
+            return new Comment[size];
+        }
+    };
+
 
     //Getters
     public String getCommentary() {
