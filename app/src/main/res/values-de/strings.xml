@@ -45,4 +45,7 @@
     <string name="updated">"Letzte Aktualisierung am: "</string>
     <string name="commentopt">Kommentar (optional)</string>
     <string name="rate">Tour Bewerten</string>
+    <string name="comments">Kommentare</string>
+    <string name="no_comments">Noch keine Kommentare vorhanden</string>
+    <string name="loadmore">Mehr Kommentare laden</string>
 </resources>

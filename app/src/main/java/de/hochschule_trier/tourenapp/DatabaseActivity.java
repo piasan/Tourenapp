@@ -23,7 +23,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class DatabaseActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener {
@@ -53,7 +52,7 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
 
     private boolean used;
 
-    private CustomAdapter tourNameAdapter;
+    private TourNameAdapter tourNameAdapter;
     private ListView listView;
 
 
@@ -125,7 +124,7 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
         super.onStart();
 
         // Set up ListView and Adapter
-        tourNameAdapter = new CustomAdapter(resultList, this);
+        tourNameAdapter = new TourNameAdapter(resultList, this);
 
         listView = (ListView) findViewById(R.id.list_view);
         listView.setAdapter(tourNameAdapter);

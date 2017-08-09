@@ -22,7 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class CustomAdapter extends ArrayAdapter<Tour>{
+public class TourNameAdapter extends ArrayAdapter<Tour>{
 
     Context mContext;
 
@@ -37,7 +37,7 @@ public class CustomAdapter extends ArrayAdapter<Tour>{
         TextView distance;
     }
 
-    public CustomAdapter(ArrayList<Tour> tour, Context context) {
+    public TourNameAdapter(ArrayList<Tour> tour, Context context) {
         super(context, R.layout.row_item, tour);
         this.mContext=context;
 

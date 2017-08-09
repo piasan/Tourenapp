@@ -1,13 +1,18 @@
 package de.hochschule_trier.tourenapp;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Layout;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,14 +39,19 @@ public class TourDetailActivity extends AppCompatActivity implements View.OnClic
     private TextView textViewLastUpdate;
     private RatingBar ratingBar;
     private EditText editComment;
+    private TextView loadMore;
 
     private LinearLayout layout;
 
     private ArrayList<Waypoint> waypoints;
+    private ArrayList<Comment> comments;
 
     private DatabaseReference mDatabase;
     private FirebaseUser user;
     private String tourID;
+
+    private long start = System.currentTimeMillis();
+    private int page = 0;
 
 
     private boolean WPComplete;
@@ -64,22 +74,16 @@ public class TourDetailActivity extends AppCompatActivity implements View.OnClic
         textViewLastUpdate = (TextView) findViewById(R.id.textUpdate);
         ratingBar = (RatingBar) findViewById(R.id.rating);
         editComment = (EditText) findViewById(R.id.editComment);
+        loadMore = (TextView) findViewById(R.id.loadMore);
 
+        comments = new ArrayList<>();
         layout = (LinearLayout) findViewById(R.id.ratingLayout);
 
         findViewById(R.id.buttonMaps).setOnClickListener(this);
         findViewById(R.id.rate).setOnClickListener(this);
         findViewById(R.id.ok_button).setOnClickListener(this);
         findViewById(R.id.cancel_button).setOnClickListener(this);
-
-        if (savedInstanceState != null) {
-
-            editComment.setText(savedInstanceState.getString("comment"));
-            if (savedInstanceState.getBoolean("visible"))
-                layout.setVisibility(View.VISIBLE);
-
-        }
-
+        loadMore.setOnClickListener(this);
 
         // Get an instance of the database
         FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -89,11 +93,31 @@ public class TourDetailActivity extends AppCompatActivity implements View.OnClic
         user = FirebaseAuth.getInstance().getCurrentUser();
 
 
-        //Read tour data from the database
+        if (savedInstanceState != null) {
+
+            editComment.setText(savedInstanceState.getString("commentary"));
+            if (savedInstanceState.getBoolean("visible"))
+                layout.setVisibility(View.VISIBLE);
+            start = savedInstanceState.getLong("start");
+            page = savedInstanceState.getInt("page");
+
+
+
+        }
+
+        // Read tour data from the database
         addTourData();
 
-        //Retrieve Waypoint Data
+        // Retrieve Waypoint Data
         addWaypointData();
+
+        // Load Comments from Database
+        loadComments();
+
+
+
+
+
 
     }
 
@@ -101,8 +125,10 @@ public class TourDetailActivity extends AppCompatActivity implements View.OnClic
     public void onSaveInstanceState(Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
 
-        savedInstanceState.putString("comment", editComment.getText().toString());
+        savedInstanceState.putString("commentary", editComment.getText().toString());
         savedInstanceState.putBoolean("visible", layout.getVisibility() == View.VISIBLE);
+        savedInstanceState.putInt("page", page);
+        savedInstanceState.putLong("start", start);
 
     }
 
@@ -141,7 +167,7 @@ public class TourDetailActivity extends AppCompatActivity implements View.OnClic
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                waypoints = new ArrayList<Waypoint>();
+                waypoints = new ArrayList<>();
                 WPComplete = false;
 
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
@@ -161,6 +187,81 @@ public class TourDetailActivity extends AppCompatActivity implements View.OnClic
                 finish();
             }
         });
+
+    }
+
+    public void loadComments() {
+
+        mDatabase.child("Comments").child("Tour" + tourID).orderByChild("timestamp").startAt(1).endAt(start).
+                limitToLast(5).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Comment comment = snapshot.getValue(Comment.class);
+                    comments.add(page * 5, comment);
+
+                }
+
+                addComments();
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                Log.w(TAG, "Failed to read value.", error.toException());
+                finish();
+            }
+        });
+
+
+    }
+
+    public void addComments() {
+
+        TextView noComment = (TextView) findViewById(R.id.nocomments);
+
+        LinearLayout listView = (LinearLayout) findViewById(R.id.listLayout);
+        listView.removeAllViews();
+        LinearLayout hiding = (LinearLayout) findViewById(R.id.hidingLayout);
+        getApplicationContext().setTheme(R.style.AppTheme);
+
+        if (comments.size() > 0) {
+            hiding.setVisibility(View.VISIBLE);
+            noComment.setVisibility(View.GONE);
+
+        } else {
+
+            hiding.setVisibility(View.GONE);
+            noComment.setVisibility(View.VISIBLE);
+
+        }
+
+        if(comments.size() < (page + 1) * 5){
+            loadMore.setVisibility(View.GONE);
+        }
+
+            for (int i = 0; i < comments.size(); i++) {
+                LayoutInflater inflater = LayoutInflater.from(getApplicationContext());
+
+                View view = inflater.inflate(R.layout.comment_item, null);
+
+                TextView date = (TextView) view.findViewById(R.id.item_date);
+                Date d = new Date(comments.get(i).getTimestamp());
+                SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy");
+                date.setText("(" + df.format(d) + ")");
+                RatingBar rating = (RatingBar) view.findViewById(R.id.rating);
+                rating.setRating(comments.get(i).getRating());
+                TextView author = (TextView) view.findViewById(R.id.author);
+                author.setText(comments.get(i).getAuthor());
+                TextView commentary = (TextView) view.findViewById(R.id.commentary);
+                commentary.setText(comments.get(i).getCommentary());
+
+                listView.addView(view);
+
+            }
+
 
     }
 
@@ -211,6 +312,10 @@ public class TourDetailActivity extends AppCompatActivity implements View.OnClic
                     }
 
                     mDatabase.child("Comments").child("Tour" + tourID).push().setValue(comment);
+                    if (text.length() > 0) {
+                        comments.add(0, comment);
+                        addComments();
+                    }
 
                     layout.setVisibility(View.GONE);
 
@@ -223,6 +328,15 @@ public class TourDetailActivity extends AppCompatActivity implements View.OnClic
                 editComment.setText("");
                 ratingBar.setRating(0);
                 layout.setVisibility(View.GONE);
+                break;
+
+            case R.id.loadMore:
+
+                page ++;
+                start = comments.get(comments.size()-1).getTimestamp()-1;
+                loadComments();
+
+                break;
 
         }
 

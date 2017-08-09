@@ -36,8 +36,10 @@
     <string name="stop_rec">Stop Recording</string>
     <string name="maps">Show Tour on Map</string>
     <string name="comment">Comment</string>
+    <string name="comments">Comments</string>
     <string name="search">Search</string>
     <string name="extsearch">Extended Search</string>
+    <string name="loadmore">Load more comments</string>
 
     <!-- TextView labels -->
     <string name="tour_name">Tour Name</string>
@@ -51,6 +53,7 @@
     <string name="updated">Last update on: </string>
     <string name="commentopt">Comment (optional)</string>
     <string name="rate">Rate Tour</string>
+    <string name="no_comments">No comments yet</string>
 
 
     <!-- Spinner contents -->
