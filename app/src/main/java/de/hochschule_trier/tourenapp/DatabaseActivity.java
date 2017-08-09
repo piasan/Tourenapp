@@ -83,13 +83,13 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
 
 
         //Read User Data
-        mDatabase.child("Users").addListenerForSingleValueEvent(new ValueEventListener() {
+        mDatabase.child("Users").child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 // Check if current User already exists.
                 // If not, create new database entry for this user
-                User currentUser = dataSnapshot.child(user.getUid()).getValue(User.class);
+                User currentUser = dataSnapshot.getValue(User.class);
 
                 if (currentUser == null) {
                     createNewUser();
@@ -232,7 +232,6 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
                                 public void onDataChange(DataSnapshot dataSnapshot) {
 
                                     waypoint = new Waypoint(0, 0);
-
 
                                     for (DataSnapshot snapshot1 : dataSnapshot.getChildren()) {
                                         waypoint = snapshot1.getValue(Waypoint.class);

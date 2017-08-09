@@ -40,6 +40,7 @@ public class TourDetailActivity extends AppCompatActivity implements View.OnClic
     private RatingBar ratingBar;
     private EditText editComment;
     private TextView loadMore;
+    private TextView authorName;
 
     private LinearLayout layout;
 
@@ -49,6 +50,8 @@ public class TourDetailActivity extends AppCompatActivity implements View.OnClic
     private DatabaseReference mDatabase;
     private FirebaseUser user;
     private String tourID;
+
+    private Comment comment;
 
     private long start = System.currentTimeMillis();
     private int page = 0;
@@ -68,6 +71,7 @@ public class TourDetailActivity extends AppCompatActivity implements View.OnClic
         tourID = intent.getStringExtra("TourID");
 
         textViewTourName = (TextView) findViewById(R.id.textViewTourName);
+        authorName = (TextView) findViewById(R.id.author);
         textViewTourDescription = (TextView) findViewById(R.id.textViewTourDescription);
         textViewTourDescription.setMovementMethod(new ScrollingMovementMethod());
         textViewDate = (TextView) findViewById(R.id.textDate);
@@ -92,6 +96,11 @@ public class TourDetailActivity extends AppCompatActivity implements View.OnClic
         // Current Firebase User
         user = FirebaseAuth.getInstance().getCurrentUser();
 
+// Read tour data from the database
+        addTourData();
+
+        // Retrieve Waypoint Data
+        addWaypointData();
 
         if (savedInstanceState != null) {
 
@@ -100,24 +109,14 @@ public class TourDetailActivity extends AppCompatActivity implements View.OnClic
                 layout.setVisibility(View.VISIBLE);
             start = savedInstanceState.getLong("start");
             page = savedInstanceState.getInt("page");
+            comments = savedInstanceState.getParcelableArrayList("comments");
 
+            addComments();
 
+        } else
 
-        }
-
-        // Read tour data from the database
-        addTourData();
-
-        // Retrieve Waypoint Data
-        addWaypointData();
-
-        // Load Comments from Database
-        loadComments();
-
-
-
-
-
+            // Load Comments from Database
+            loadComments();
 
     }
 
@@ -129,6 +128,7 @@ public class TourDetailActivity extends AppCompatActivity implements View.OnClic
         savedInstanceState.putBoolean("visible", layout.getVisibility() == View.VISIBLE);
         savedInstanceState.putInt("page", page);
         savedInstanceState.putLong("start", start);
+        savedInstanceState.putParcelableArrayList("comments", comments);
 
     }
 
@@ -147,6 +147,24 @@ public class TourDetailActivity extends AppCompatActivity implements View.OnClic
                 SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy");
                 textViewDate.setText(df.format(date));
                 textViewLastUpdate.setText(df.format(update));
+
+                mDatabase.child("Users").child(tour.getAuthorName()).child("name").
+                        addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+
+                        String name = dataSnapshot.getValue(String.class);
+                        authorName.setText(name);
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        // Failed to read value
+                        Log.w(TAG, "Failed to read value.", databaseError.toException());
+                        finish();
+                    }
+                });
 
 
             }
@@ -198,7 +216,7 @@ public class TourDetailActivity extends AppCompatActivity implements View.OnClic
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    Comment comment = snapshot.getValue(Comment.class);
+                    comment = snapshot.getValue(Comment.class);
                     comments.add(page * 5, comment);
 
                 }
@@ -238,29 +256,29 @@ public class TourDetailActivity extends AppCompatActivity implements View.OnClic
 
         }
 
-        if(comments.size() < (page + 1) * 5){
+        if (comments.size() < (page + 1) * 5) {
             loadMore.setVisibility(View.GONE);
         }
 
-            for (int i = 0; i < comments.size(); i++) {
-                LayoutInflater inflater = LayoutInflater.from(getApplicationContext());
+        for (int i = 0; i < comments.size(); i++) {
+            LayoutInflater inflater = LayoutInflater.from(getApplicationContext());
 
-                View view = inflater.inflate(R.layout.comment_item, null);
+            View view = inflater.inflate(R.layout.comment_item, null);
 
-                TextView date = (TextView) view.findViewById(R.id.item_date);
-                Date d = new Date(comments.get(i).getTimestamp());
-                SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy");
-                date.setText("(" + df.format(d) + ")");
-                RatingBar rating = (RatingBar) view.findViewById(R.id.rating);
-                rating.setRating(comments.get(i).getRating());
-                TextView author = (TextView) view.findViewById(R.id.author);
-                author.setText(comments.get(i).getAuthor());
-                TextView commentary = (TextView) view.findViewById(R.id.commentary);
-                commentary.setText(comments.get(i).getCommentary());
+            TextView date = (TextView) view.findViewById(R.id.item_date);
+            Date d = new Date(comments.get(i).getTimestamp());
+            SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy");
+            date.setText("(" + df.format(d) + ")");
+            RatingBar rating = (RatingBar) view.findViewById(R.id.rating);
+            rating.setRating(comments.get(i).getRating());
+            TextView author = (TextView) view.findViewById(R.id.author);
+            author.setText(comments.get(i).getAuthor());
+            TextView commentary = (TextView) view.findViewById(R.id.commentary);
+            commentary.setText(comments.get(i).getCommentary());
 
-                listView.addView(view);
+            listView.addView(view);
 
-            }
+        }
 
 
     }
@@ -332,8 +350,8 @@ public class TourDetailActivity extends AppCompatActivity implements View.OnClic
 
             case R.id.loadMore:
 
-                page ++;
-                start = comments.get(comments.size()-1).getTimestamp()-1;
+                page++;
+                start = comments.get(comments.size() - 1).getTimestamp() - 1;
                 loadComments();
 
                 break;
