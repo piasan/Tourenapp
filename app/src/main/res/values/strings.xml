@@ -65,20 +65,28 @@
     <string name="desc">descending</string>
 
     <!-- Tag List -->
+    <string name="foot">By Foot</string>
+    <string name="bike">By Bike</string>
+    <string name="dogs">With Dogs</string>
+    <string name="wheelchair">Accessible with baby carriages or wheelchairs</string>
+    <string name="flat">Flat Trail</string>
+    <string name="food">Food and Drink</string>
+    <string name="multi">Multi-Tour</string>
+    <string name="games">Contains Mini Games</string>
+    <string name="restricted">Restricted access</string>
+
     <string-array name="tag_list">
-        <item>By Foot</item>
-        <item>By Bike</item>
-        <item>With Dogs</item>
-        <item>Accessible with baby carriages or wheelchairs</item>
-        <item>Contains unmade roads</item>
-        <item>Great difference in altitude</item>
-        <item>Food and Drink</item>
-        <item>Multi-Tour</item>
-        <item>Contains Mini Games</item>
-        <item>Restricted access</item>
+        <item>@string/foot</item>
+        <item>@string/bike</item>
+        <item>@string/dogs</item>
+        <item>@string/wheelchair</item>
+        <item>@string/flat</item>
+        <item>@string/food</item>
+        <item>@string/multi</item>
+        <item>@string/games</item>
+        <item>@string/restricted</item>
 
     </string-array>
-
 
     <!-- Dialog messages -->
     <string name="cancel_rec_message">Do you really want to cancel recording? \nAll waypoints will be lost!</string>

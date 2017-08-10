@@ -48,4 +48,14 @@
     <string name="comments">Kommentare</string>
     <string name="no_comments">Noch keine Kommentare vorhanden</string>
     <string name="loadmore">Mehr Kommentare laden</string>
+
+        <string name="bike">Mit dem Fahrrad</string>
+        <string name="food">Essen und Trinken</string>
+        <string name="foot">Zu Fuß</string>
+        <string name="games">Enthält Minispiele</string>
+        <string name="multi">Multi-Tour</string>
+        <string name="restricted">Beschränkter Zugang</string>
+        <string name="wheelchair">Mit Kinderwägen oder Rollstuhl begehbar</string>
+        <string name="dogs">Mit Hunden</string>
+        <string name="flat">Flache Strecke</string>
 </resources>

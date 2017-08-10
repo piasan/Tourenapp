@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Layout;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -41,11 +43,13 @@ public class TourDetailActivity extends AppCompatActivity implements View.OnClic
     private EditText editComment;
     private TextView loadMore;
     private TextView authorName;
+    private TextView textViewTags;
 
     private LinearLayout layout;
 
     private ArrayList<Waypoint> waypoints;
     private ArrayList<Comment> comments;
+    private ArrayList<String> tags;
 
     private DatabaseReference mDatabase;
     private FirebaseUser user;
@@ -76,6 +80,7 @@ public class TourDetailActivity extends AppCompatActivity implements View.OnClic
         textViewTourDescription.setMovementMethod(new ScrollingMovementMethod());
         textViewDate = (TextView) findViewById(R.id.textDate);
         textViewLastUpdate = (TextView) findViewById(R.id.textUpdate);
+        textViewTags = (TextView) findViewById(R.id.textViewTags);
         ratingBar = (RatingBar) findViewById(R.id.rating);
         editComment = (EditText) findViewById(R.id.editComment);
         loadMore = (TextView) findViewById(R.id.loadMore);
@@ -96,7 +101,7 @@ public class TourDetailActivity extends AppCompatActivity implements View.OnClic
         // Current Firebase User
         user = FirebaseAuth.getInstance().getCurrentUser();
 
-// Read tour data from the database
+        // Read tour data from the database
         addTourData();
 
         // Retrieve Waypoint Data
@@ -148,23 +153,72 @@ public class TourDetailActivity extends AppCompatActivity implements View.OnClic
                 textViewDate.setText(df.format(date));
                 textViewLastUpdate.setText(df.format(update));
 
+
+                String tagString = "";
+                tags = new ArrayList<>();
+                for (DataSnapshot snapshot : dataSnapshot.child("Tags").getChildren()) {
+                    if(snapshot.getValue(Boolean.class) == true){
+
+                        String key = snapshot.getKey();
+
+                        switch (key){
+                            case "foot":
+                                tags.add(getResources().getString(R.string.foot));
+                                break;
+                            case "bike":
+                                tags.add(getResources().getString(R.string.bike));
+                                break;
+                            case "dogs":
+                                tags.add(getResources().getString(R.string.dogs));
+                                break;
+                            case "wheelchair":
+                                tags.add(getResources().getString(R.string.wheelchair));
+                                break;
+                            case "flat":
+                                tags.add(getResources().getString(R.string.flat));
+                                break;
+                            case "food":
+                                tags.add(getResources().getString(R.string.food));
+                                break;
+                            case "multi":
+                                tags.add(getResources().getString(R.string.multi));
+                                break;
+                            case "games":
+                                tags.add(getResources().getString(R.string.games));
+                                break;
+                            case "restricted":
+                                tags.add(getResources().getString(R.string.restricted));
+                                break;
+
+                        }
+
+
+                        tagString += "#" + tags.get(tags.size()-1) + " ";
+
+                    }
+                }
+
+                textViewTags.setText(tagString);
+
+
+
                 mDatabase.child("Users").child(tour.getAuthorName()).child("name").
                         addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
 
-                        String name = dataSnapshot.getValue(String.class);
-                        authorName.setText(name);
+                                String name = dataSnapshot.getValue(String.class);
+                                authorName.setText(name);
 
-                    }
+                            }
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        // Failed to read value
-                        Log.w(TAG, "Failed to read value.", databaseError.toException());
-                        finish();
-                    }
-                });
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                                // Failed to read value
+                                Log.w(TAG, "Failed to read value.", databaseError.toException());
+                                finish();
+                            }
+                        });
 
 
             }
@@ -220,6 +274,7 @@ public class TourDetailActivity extends AppCompatActivity implements View.OnClic
                     comments.add(page * 5, comment);
 
                 }
+
 
                 addComments();
 

@@ -13,6 +13,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -24,7 +25,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class RecordTourActivity extends AppCompatActivity implements View.OnClickListener{
+public class RecordTourActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final int MY_PERMISSION_ACCESS_COARSE_LOCATION = 11;
     private static final int NEW_TOUR_REQUEST_CODE = 2;
@@ -37,6 +38,8 @@ public class RecordTourActivity extends AppCompatActivity implements View.OnClic
     private String tourID;
     private boolean recording;
 
+    private Location commentLocation;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,7 +47,7 @@ public class RecordTourActivity extends AppCompatActivity implements View.OnClic
         setContentView(R.layout.activity_record_tour);
 
 
-        if(savedInstanceState != null){
+        if (savedInstanceState != null) {
 
             tourID = savedInstanceState.getString("tourID");
 
@@ -59,7 +62,6 @@ public class RecordTourActivity extends AppCompatActivity implements View.OnClic
                 recording = true;
             }
         }
-
 
 
         // Button listeners
@@ -79,9 +81,8 @@ public class RecordTourActivity extends AppCompatActivity implements View.OnClic
     }
 
 
-
     @Override
-    protected void onResume(){
+    protected void onResume() {
         super.onResume();
 
     }
@@ -134,29 +135,19 @@ public class RecordTourActivity extends AppCompatActivity implements View.OnClic
 
                     String comment = data.getStringExtra("COMMENT");
 
-                    LocationManager mLocationManager =
-                            (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
 
+                    if (commentLocation != null) {
 
-                    Location loc;
-                    try {
-                        loc = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                    } catch (SecurityException e){
-                        loc = null;
-                    }
+                        Waypoint wp = new Waypoint(commentLocation.getLatitude(), commentLocation.getLongitude(), comment);
+                        mDatabase.child("Waypoints").child("Tour" + tourID).push().setValue(wp);
 
-                    if (loc != null) {
-
-                        Waypoint wp = new Waypoint(loc.getLatitude(), loc.getLongitude(), comment);
-                        mDatabase.child("Waypoints").child("Tour"+tourID).push().setValue(wp);
-
-                    }
+                    } else
+                        Toast.makeText(this, "Kommentar konnte nicht gespeichert werden", Toast.LENGTH_LONG).show();
                 }
 
                 break;
 
         }
-
 
 
     }
@@ -169,17 +160,34 @@ public class RecordTourActivity extends AppCompatActivity implements View.OnClic
 
         String[] tagList = getResources().getStringArray(R.array.tag_list);
 
+
         mDatabase.child("Touren").child(tourID).setValue(tour);
 
-        for(int i = 0; i < tags.length; i++){
-            mDatabase.child("Touren").child(tourID).child(tagList[i]).setValue(tags[i]);
+        for (int i = 0; i < tags.length; i++) {
+
+            if (tagList[i].equals(getResources().getString(R.string.foot)))
+                mDatabase.child("Touren").child(tourID).child("Tags").child("foot").setValue(tags[i]);
+            else if (tagList[i].equals(getResources().getString(R.string.bike)))
+                mDatabase.child("Touren").child(tourID).child("Tags").child("bike").setValue(tags[i]);
+            else if (tagList[i].equals(getResources().getString(R.string.dogs)))
+                mDatabase.child("Touren").child(tourID).child("Tags").child("dogs").setValue(tags[i]);
+            else if (tagList[i].equals(getResources().getString(R.string.wheelchair)))
+                mDatabase.child("Touren").child(tourID).child("Tags").child("wheelchair").setValue(tags[i]);
+            else if (tagList[i].equals(getResources().getString(R.string.flat)))
+                mDatabase.child("Touren").child(tourID).child("Tags").child("flat").setValue(tags[i]);
+            else if (tagList[i].equals(getResources().getString(R.string.multi)))
+                mDatabase.child("Touren").child(tourID).child("Tags").child("multi").setValue(tags[i]);
+            else if (tagList[i].equals(getResources().getString(R.string.games)))
+                mDatabase.child("Touren").child(tourID).child("Tags").child("games").setValue(tags[i]);
+            else if (tagList[i].equals(getResources().getString(R.string.restricted)))
+                mDatabase.child("Touren").child(tourID).child("Tags").child("restricted").setValue(tags[i]);
+
         }
 
     }
 
 
-
-        // On Click Listener
+    // On Click Listener
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -190,8 +198,8 @@ public class RecordTourActivity extends AppCompatActivity implements View.OnClic
 
                 //Check Permissions for GPS Usage
                 //If permission is not granted, service can't be started.
-                if ( ContextCompat.checkSelfPermission( this, android.Manifest.permission.ACCESS_COARSE_LOCATION )
-                        != PackageManager.PERMISSION_GRANTED ) {
+                if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION)
+                        != PackageManager.PERMISSION_GRANTED) {
 
                     ActivityCompat.requestPermissions(this,
                             new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION},
@@ -232,6 +240,22 @@ public class RecordTourActivity extends AppCompatActivity implements View.OnClic
                 break;
 
             case R.id.button_comment:
+
+                //Check Permissions for GPS Usage
+                //If permission is not granted, service can't be started.
+                if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION)
+                        != PackageManager.PERMISSION_GRANTED) {
+
+                    ActivityCompat.requestPermissions(this,
+                            new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION},
+                            MY_PERMISSION_ACCESS_COARSE_LOCATION);
+
+                }
+
+                LocationManager mLocationManager =
+                        (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+
+                commentLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
                 Intent newCommentIntent = new Intent(this, CommentActivity.class);
                 startActivityForResult(newCommentIntent, NEW_COMMENT_REQUEST_CODE);

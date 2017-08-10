@@ -55,10 +55,11 @@ public class CreateNewTourActivity extends AppCompatActivity implements View.OnC
 
     private void addCheckboxes() {
 
-        String[] tagList = getResources().getStringArray(R.array.tag_list);
-        ViewGroup checkboxContainer = (ViewGroup) findViewById(R.id.checkBoxLayout);
+       String[] tagList = getResources().getStringArray(R.array.tag_list);
+
 
         getApplicationContext().setTheme(R.style.AppTheme);
+        ViewGroup checkboxContainer = (ViewGroup) findViewById(R.id.checkBoxLayout);
 
         checkboxes = new ArrayList<>();
         for (int i = 0; i < tagList.length; i++){
