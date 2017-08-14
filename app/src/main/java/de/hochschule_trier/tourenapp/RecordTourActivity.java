@@ -13,6 +13,8 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.Toast;
 
 
@@ -55,9 +57,7 @@ public class RecordTourActivity extends AppCompatActivity implements View.OnClic
 
                 findViewById(R.id.layout_rec_inactive).setVisibility(View.GONE);
                 findViewById(R.id.layout_rec_active).setVisibility(View.VISIBLE);
-                findViewById(R.id.button_start_rec).setVisibility(View.GONE);
-                findViewById(R.id.button_stop_rec).setVisibility(View.VISIBLE);
-                findViewById(R.id.button_cancel_rec).setVisibility(View.VISIBLE);
+                findViewById(R.id.textView).setVisibility(View.VISIBLE);
 
                 recording = true;
             }
@@ -212,9 +212,7 @@ public class RecordTourActivity extends AppCompatActivity implements View.OnClic
 
                 findViewById(R.id.layout_rec_inactive).setVisibility(View.GONE);
                 findViewById(R.id.layout_rec_active).setVisibility(View.VISIBLE);
-                findViewById(R.id.button_start_rec).setVisibility(View.GONE);
-                findViewById(R.id.button_stop_rec).setVisibility(View.VISIBLE);
-                findViewById(R.id.button_cancel_rec).setVisibility(View.VISIBLE);
+                findViewById(R.id.textView).setVisibility(View.VISIBLE);
 
                 Intent startIntent = new Intent(this, GPSService.class);
                 startIntent.putExtra("TOURID", tourID);
@@ -227,9 +225,8 @@ public class RecordTourActivity extends AppCompatActivity implements View.OnClic
 
                 findViewById(R.id.layout_rec_inactive).setVisibility(View.VISIBLE);
                 findViewById(R.id.layout_rec_active).setVisibility(View.GONE);
-                findViewById(R.id.button_stop_rec).setVisibility(View.GONE);
-                findViewById(R.id.button_start_rec).setVisibility(View.VISIBLE);
-                findViewById(R.id.button_cancel_rec).setVisibility(View.INVISIBLE);
+                findViewById(R.id.textView).setVisibility(View.GONE);
+
 
                 Intent stopIntent = new Intent(this, GPSService.class);
                 stopService(stopIntent);
@@ -278,9 +275,8 @@ public class RecordTourActivity extends AppCompatActivity implements View.OnClic
 
                         findViewById(R.id.layout_rec_inactive).setVisibility(View.VISIBLE);
                         findViewById(R.id.layout_rec_active).setVisibility(View.GONE);
-                        findViewById(R.id.button_stop_rec).setVisibility(View.GONE);
-                        findViewById(R.id.button_start_rec).setVisibility(View.VISIBLE);
-                        findViewById(R.id.button_cancel_rec).setVisibility(View.INVISIBLE);
+                        findViewById(R.id.textView).setVisibility(View.GONE);
+
 
 
                         //If creating Tour is cancelled, existing data will be deleted

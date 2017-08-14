@@ -40,6 +40,8 @@
     <string name="search">Search</string>
     <string name="extsearch">Extended Search</string>
     <string name="loadmore">Load more comments</string>
+    <string name="photo">Photo</string>
+    <string name="station">Station</string>
 
     <!-- TextView labels -->
     <string name="tour_name">Tour Name</string>
@@ -54,6 +56,8 @@
     <string name="commentopt">Comment (optional)</string>
     <string name="rate">Rate Tour</string>
     <string name="no_comments">No comments yet</string>
+    <string name="recording">Recording Tour</string>
+    <string name="addToWP">Add to current waypoint:</string>
 
 
     <!-- Spinner contents -->

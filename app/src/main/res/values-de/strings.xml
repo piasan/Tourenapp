@@ -58,4 +58,8 @@
         <string name="wheelchair">Mit Kinderwägen oder Rollstuhl begehbar</string>
         <string name="dogs">Mit Hunden</string>
         <string name="flat">Flache Strecke</string>
+    <string name="recording">Tour wird aufgezeichnet</string>
+    <string name="photo">Foto</string>
+    <string name="station">Station</string>
+    <string name="addToWP">Zu aktuellem Wegpunkt hinzufügen:</string>
 </resources>
