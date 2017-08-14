@@ -261,6 +261,9 @@ public class RecordTourActivity extends AppCompatActivity implements View.OnClic
                 startActivityForResult(newCommentIntent, NEW_COMMENT_REQUEST_CODE);
                 break;
 
+
+
+
             case R.id.button_cancel_rec:
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);

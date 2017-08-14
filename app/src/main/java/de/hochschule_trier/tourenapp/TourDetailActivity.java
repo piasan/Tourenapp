@@ -157,11 +157,11 @@ public class TourDetailActivity extends AppCompatActivity implements View.OnClic
                 String tagString = "";
                 tags = new ArrayList<>();
                 for (DataSnapshot snapshot : dataSnapshot.child("Tags").getChildren()) {
-                    if(snapshot.getValue(Boolean.class) == true){
+                    if (snapshot.getValue(Boolean.class) == true) {
 
                         String key = snapshot.getKey();
 
-                        switch (key){
+                        switch (key) {
                             case "foot":
                                 tags.add(getResources().getString(R.string.foot));
                                 break;
@@ -193,13 +193,12 @@ public class TourDetailActivity extends AppCompatActivity implements View.OnClic
                         }
 
 
-                        tagString += "#" + tags.get(tags.size()-1) + " ";
+                        tagString += "#" + tags.get(tags.size() - 1) + " ";
 
                     }
                 }
 
                 textViewTags.setText(tagString);
-
 
 
                 mDatabase.child("Users").child(tour.getAuthorName()).child("name").
@@ -339,6 +338,50 @@ public class TourDetailActivity extends AppCompatActivity implements View.OnClic
     }
 
 
+    public void getAverageRating() {
+
+        mDatabase.child("Comments").child("Tour" + tourID).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                int counter = 0;
+                long sum = 0;
+
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+
+                    Comment comment = snapshot.getValue(Comment.class);
+                    long r = comment.getRating();
+                    counter++;
+
+                    sum += r;
+
+                }
+
+                if (counter == 0) {
+
+                    //no ratings yet. Set average rating to 0 in order to avoid dividing by 0
+                    mDatabase.child("Touren").child(tourID).child("averageRating").setValue(0);
+
+                } else {
+
+                    double average = (double) sum / (double) counter;
+                    mDatabase.child("Touren").child(tourID).child("averageRating").setValue(average);
+
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Failed to read value
+                Log.w(TAG, "Failed to read value.", databaseError.toException());
+                finish();
+            }
+        });
+
+    }
+
+
     public void onClick(View v) {
 
         switch (v.getId()) {
@@ -363,9 +406,9 @@ public class TourDetailActivity extends AppCompatActivity implements View.OnClic
             case R.id.ok_button:
 
                 String text = editComment.getText().toString();
-                Long rating = (long) ratingBar.getRating();
+                long rating = (long) ratingBar.getRating();
                 Comment comment;
-                Long time;
+                long time;
 
                 if (rating == 0) {
 
@@ -390,11 +433,12 @@ public class TourDetailActivity extends AppCompatActivity implements View.OnClic
                         addComments();
                     }
 
+                    getAverageRating();
                     layout.setVisibility(View.GONE);
 
                 }
-
                 break;
+
 
             case R.id.cancel_button:
 
@@ -403,12 +447,12 @@ public class TourDetailActivity extends AppCompatActivity implements View.OnClic
                 layout.setVisibility(View.GONE);
                 break;
 
+
             case R.id.loadMore:
 
                 page++;
                 start = comments.get(comments.size() - 1).getTimestamp() - 1;
                 loadComments();
-
                 break;
 
         }
