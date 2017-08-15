@@ -31,6 +31,15 @@ public class Waypoint implements Serializable {
         this.comment = comment;
     }
 
+    public Waypoint (double latitude, double longitude, String comment, String stationID){
+
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.comment = comment;
+        this.stationID = stationID;
+
+    }
+
 
     //Getters
     public double getLatitude() {

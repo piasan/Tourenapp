@@ -11,10 +11,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
 import android.widget.Toast;
 
 
@@ -23,15 +20,12 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 public class RecordTourActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final int MY_PERMISSION_ACCESS_COARSE_LOCATION = 11;
     private static final int NEW_TOUR_REQUEST_CODE = 2;
     private static final int NEW_COMMENT_REQUEST_CODE = 3;
+    private static final int NEW_STATION_REQUEST_CODE = 4;
 
     //Firebase database
     private DatabaseReference mDatabase;
@@ -41,6 +35,7 @@ public class RecordTourActivity extends AppCompatActivity implements View.OnClic
     private boolean recording;
 
     private Location commentLocation;
+    private Location stationLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,8 +62,10 @@ public class RecordTourActivity extends AppCompatActivity implements View.OnClic
         // Button listeners
         findViewById(R.id.button_start_rec).setOnClickListener(this);
         findViewById(R.id.button_stop_rec).setOnClickListener(this);
-        findViewById(R.id.button_comment).setOnClickListener(this);
         findViewById(R.id.button_cancel_rec).setOnClickListener(this);
+        findViewById(R.id.button_comment).setOnClickListener(this);
+        findViewById(R.id.button_photo).setOnClickListener(this);
+        findViewById(R.id.button_station).setOnClickListener(this);
 
         // Get an instance of the database
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -147,6 +144,54 @@ public class RecordTourActivity extends AppCompatActivity implements View.OnClic
 
                 break;
 
+            case NEW_STATION_REQUEST_CODE:
+
+                if (resultCode == RESULT_OK) {
+
+                    String stationName = data.getStringExtra("STATION_NAME");
+                    String stationDescription = data.getStringExtra("STATION_DESCRIPTION");
+
+                    if (stationLocation != null) {
+
+                        String stationID = mDatabase.child("Stations").child("Tour" + tourID).push().getKey();
+                        Waypoint wp = new Waypoint(stationLocation.getLatitude(), stationLocation.getLongitude(),
+                                "Station", stationID);
+
+                        Station station = new Station(stationName, stationDescription);
+
+                        mDatabase.child("Waypoints").child("Tour" + tourID).push().setValue(wp);
+                        mDatabase.child("Stations").child("Tour" + tourID).child(stationID).setValue(station);
+
+                        if (data.getBooleanExtra("MISSION", false)) {
+
+                            String question = data.getStringExtra("QUESTION");
+                            String answer = data.getStringExtra("ANSWER");
+                            Boolean multi = data.getBooleanExtra("MULTI", false);
+
+                            String attempts = data.getStringExtra("ATTEMPTS");
+                            long numAttempts = -1;
+
+                            //check if TextField ist empty
+                            if (attempts.length() > 0) {
+
+                                //check if number > 0. If not, number will be set to infinite attempts
+                                if (Long.parseLong(attempts) > 0){
+                                    numAttempts = Long.parseLong(attempts);
+                                }
+                            }
+
+                            Mission mission = new Mission(question, answer, multi, numAttempts);
+
+                            mDatabase.child("Stations").child("Tour" + tourID)
+                                    .child(stationID).child("Mission").setValue(mission);
+                        }
+
+
+                    }
+                }
+
+                break;
+
         }
 
 
@@ -190,6 +235,9 @@ public class RecordTourActivity extends AppCompatActivity implements View.OnClic
     // On Click Listener
     @Override
     public void onClick(View v) {
+
+        LocationManager mLocationManager;
+
         switch (v.getId()) {
 
             case R.id.button_start_rec:
@@ -236,6 +284,34 @@ public class RecordTourActivity extends AppCompatActivity implements View.OnClic
 
                 break;
 
+
+            case R.id.button_station:
+
+                //Check Permissions for GPS Usage
+                //If permission is not granted, service can't be started.
+                if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION)
+                        != PackageManager.PERMISSION_GRANTED) {
+
+                    ActivityCompat.requestPermissions(this,
+                            new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION},
+                            MY_PERMISSION_ACCESS_COARSE_LOCATION);
+
+                }
+
+                mLocationManager =
+                        (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+
+                stationLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+                Intent newStationIntent = new Intent(this, StationActivity.class);
+                startActivityForResult(newStationIntent, NEW_STATION_REQUEST_CODE);
+
+                break;
+
+            case R.id.button_photo:
+
+                break;
+
             case R.id.button_comment:
 
                 //Check Permissions for GPS Usage
@@ -249,7 +325,7 @@ public class RecordTourActivity extends AppCompatActivity implements View.OnClic
 
                 }
 
-                LocationManager mLocationManager =
+                mLocationManager =
                         (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
 
                 commentLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
@@ -257,8 +333,6 @@ public class RecordTourActivity extends AppCompatActivity implements View.OnClic
                 Intent newCommentIntent = new Intent(this, CommentActivity.class);
                 startActivityForResult(newCommentIntent, NEW_COMMENT_REQUEST_CODE);
                 break;
-
-
 
 
             case R.id.button_cancel_rec:
@@ -276,7 +350,6 @@ public class RecordTourActivity extends AppCompatActivity implements View.OnClic
                         findViewById(R.id.layout_rec_inactive).setVisibility(View.VISIBLE);
                         findViewById(R.id.layout_rec_active).setVisibility(View.GONE);
                         findViewById(R.id.textView).setVisibility(View.GONE);
-
 
 
                         //If creating Tour is cancelled, existing data will be deleted

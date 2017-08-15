@@ -45,6 +45,7 @@
 
     <!-- TextView labels -->
     <string name="tour_name">Tour Name</string>
+    <string name="station_name">Station Name</string>
     <string name="tour_description">Description</string>
     <string name="author_name">Author Name</string>
     <string name="available_tours">Available tours</string>
@@ -58,6 +59,12 @@
     <string name="no_comments">No comments yet</string>
     <string name="recording">Recording Tour</string>
     <string name="addToWP">Add to current waypoint:</string>
+    <string name="addMission">Add Mission</string>
+    <string name="question">Question</string>
+    <string name="answer">Correct Answer</string>
+    <string name="unlock">Unlocks next part of the tour</string>
+    <string name="num_attempts">Number of attempts:</string>
+    <string name="leave_empty">(Leave blank for infinite attempts)</string>
 
 
     <!-- Spinner contents -->
@@ -75,7 +82,7 @@
     <string name="wheelchair">Accessible with baby carriages or wheelchairs</string>
     <string name="flat">Flat Trail</string>
     <string name="food">Food and Drink</string>
-    <string name="multi">Multi-Tour</string>
+    <string name="multi">Mystery-Tour</string>
     <string name="games">Contains Mini Games</string>
     <string name="restricted">Restricted access</string>
 
@@ -94,13 +101,15 @@
 
     <!-- Dialog messages -->
     <string name="cancel_rec_message">Do you really want to cancel recording? \nAll waypoints will be lost!</string>
-    <string name="cancel_rec_title">Cancel recording?</string>
+    <string name="cancel_rec_title">Cancel?</string>
 
 
     <!-- Alert messages -->
     <string name="no_comment">Comment can\'t be empty</string>
     <string name="no_name">Name can\'t be empty</string>
     <string name="no_description">Description can\'t be empty</string>
+    <string name="no_mission">Mission info missing</string>
+    <string name="attempts_warning">Setting limited amount of attempts for missions that unlock another part of the tour is not recommended, because  users that run out of attempts aren\'t able to complete the tour! </string>
 
     <!-- Content Description for images -->
     <string name="desc_google_icon">Google Logo</string>

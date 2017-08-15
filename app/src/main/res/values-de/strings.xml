@@ -18,7 +18,7 @@
     <string name="start_rec">Aufzeichnung Starten</string>
     <string name="stop_rec">Aufzeichnung Beenden</string>
     <string name="cancel_rec">Aufzeichnung abbrechen</string>
-    <string name="cancel_rec_title">Aufzeichnung abbrechen?</string>
+    <string name="cancel_rec_title">Abbrechen?</string>
     <string name="comment">Kommentar</string>
     <string name="km">km</string>
     <string name="maps">Tour auf Karte anzeigen</string>
@@ -53,7 +53,7 @@
         <string name="food">Essen und Trinken</string>
         <string name="foot">Zu Fuß</string>
         <string name="games">Enthält Minispiele</string>
-        <string name="multi">Multi-Tour</string>
+        <string name="multi">Mystery-Tour</string>
         <string name="restricted">Beschränkter Zugang</string>
         <string name="wheelchair">Mit Kinderwägen oder Rollstuhl begehbar</string>
         <string name="dogs">Mit Hunden</string>
@@ -62,4 +62,14 @@
     <string name="photo">Foto</string>
     <string name="station">Station</string>
     <string name="addToWP">Zu aktuellem Wegpunkt hinzufügen:</string>
+    <string name="addMission">Aufgabe Hinzufügen</string>
+    <string name="station_name">Name der Station</string>
+    <string name="question">Fragestellung:</string>
+    <string name="answer">Richtige Antwort</string>
+    <string name="unlock">Schaltet nächsten Tourabschnitt frei</string>
+    <string name="no_mission">Aufgabe fehlt</string>
+    <string name="num_attempts">Anzahl Versuche:</string>
+    <string name="leave_empty">(Für unbegrenzte Versuche Feld leer lassen)</string>
+    <string name="cancel_rec_message">Soll die Aufzeichnung wirklich abgebrochen werden? Alle Wegpunkte gehen verloren!</string>
+    <string name="attempts_warning">Es wird nicht empfohlen, die Anzahl an Versuchen für eine Aufgabe, die einen weiteren Tourabschnitt freischaltet, zu begrenzen, da die Tour unter Umständen nicht mehr abgeschlossen werden kann!</string>
 </resources>
