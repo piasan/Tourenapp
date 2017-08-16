@@ -1,20 +1,16 @@
 package de.hochschule_trier.tourenapp;
 
-import android.content.Context;
 import android.content.Intent;
+import android.media.Image;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Layout;
-import android.text.Spannable;
-import android.text.SpannableString;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -50,12 +46,14 @@ public class TourDetailActivity extends AppCompatActivity implements View.OnClic
     private ArrayList<Waypoint> waypoints;
     private ArrayList<Comment> comments;
     private ArrayList<String> tags;
+    private ArrayList<Station> stations;
 
     private DatabaseReference mDatabase;
     private FirebaseUser user;
     private String tourID;
 
     private Comment comment;
+    private Station station;
 
     private long start = System.currentTimeMillis();
     private int page = 0;
@@ -86,6 +84,7 @@ public class TourDetailActivity extends AppCompatActivity implements View.OnClic
         loadMore = (TextView) findViewById(R.id.loadMore);
 
         comments = new ArrayList<>();
+        stations = new ArrayList<>();
         layout = (LinearLayout) findViewById(R.id.ratingLayout);
 
         findViewById(R.id.buttonMaps).setOnClickListener(this);
@@ -123,7 +122,12 @@ public class TourDetailActivity extends AppCompatActivity implements View.OnClic
             // Load Comments from Database
             loadComments();
 
+        loadStations();
+
     }
+
+
+
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
@@ -261,6 +265,7 @@ public class TourDetailActivity extends AppCompatActivity implements View.OnClic
 
     }
 
+
     public void loadComments() {
 
         mDatabase.child("Comments").child("Tour" + tourID).orderByChild("timestamp").startAt(1).endAt(start).
@@ -337,6 +342,64 @@ public class TourDetailActivity extends AppCompatActivity implements View.OnClic
 
     }
 
+    public void loadStations(){
+
+        mDatabase.child("Stations").child("Tour" + tourID).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    station = snapshot.getValue(Station.class);
+                    stations.add(station);
+
+                }
+
+                addStations();
+
+            }
+
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Failed to read value
+                Log.w(TAG, "Failed to read value.", databaseError.toException());
+                finish();
+            }
+        });
+
+    }
+
+    public void addStations() {
+
+        TextView noStations = (TextView) findViewById(R.id.noStations);
+
+        LinearLayout stationList = (LinearLayout) findViewById(R.id.stationList);
+        stationList.removeAllViews();
+        getApplicationContext().setTheme(R.style.AppTheme);
+
+        if (stations.size() > 0) {
+            noStations.setVisibility(View.GONE);
+        } else
+            noStations.setVisibility(View.VISIBLE);
+
+
+        for (int i = 0; i < stations.size(); i++) {
+            LayoutInflater inflater = LayoutInflater.from(getApplicationContext());
+
+            View stationView = inflater.inflate(R.layout.station_item, null);
+
+            TextView stationName = (TextView) stationView.findViewById(R.id.stationName);
+            stationName.setText(stations.get(i).getName());
+            ImageView image = (ImageView) stationView.findViewById(R.id.imageView);
+
+
+            stationList.addView(stationView);
+
+
+        }
+
+
+    }
 
     public void getAverageRating() {
 

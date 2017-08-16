@@ -4,6 +4,7 @@ public class Station {
 
     private String name;
     private String description;
+    private String imageURL;
 
     public Station(){}
 
@@ -23,6 +24,10 @@ public class Station {
         return description;
     }
 
+    public String getImageURL() {
+        return imageURL;
+    }
+
 
     //Setters
     public void setDescription(String description) {
@@ -31,6 +36,10 @@ public class Station {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void setImageURL(String imageURL) {
+        this.imageURL = imageURL;
     }
 
 }

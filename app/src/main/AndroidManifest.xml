@@ -2,6 +2,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="de.hochschule_trier.tourenapp">
 
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -21,39 +29,32 @@
 
         <activity
             android:name=".DatabaseActivity"
-            android:windowSoftInputMode="adjustPan|stateUnchanged"></activity>
+            android:windowSoftInputMode="adjustPan|stateUnchanged" />
 
-        <activity android:name=".CreateNewTourActivity"></activity>
+        <activity android:name=".CreateNewTourActivity" />
 
-        <activity android:name=".RecordTourActivity"></activity>
+        <activity android:name=".RecordTourActivity" />
 
-        <activity android:name=".MapsActivity"></activity>
+        <activity android:name=".MapsActivity" />
 
         <activity
             android:name=".TourDetailActivity"
-            android:windowSoftInputMode="adjustResize|stateUnchanged"></activity>
+            android:windowSoftInputMode="adjustResize|stateUnchanged" />
 
         <activity
             android:name=".CommentActivity"
-            android:windowSoftInputMode="adjustResize"></activity>
+            android:windowSoftInputMode="adjustResize" />
 
         <activity
             android:name=".StationActivity"
-            android:windowSoftInputMode="adjustResize"></activity>
+            android:windowSoftInputMode="adjustResize" />
 
         <activity
             android:name=".SearchActivity"
-            android:windowSoftInputMode="adjustPan|stateUnchanged"></activity>
+            android:windowSoftInputMode="adjustPan|stateUnchanged" />
 
         <service android:name=".GPSService" />
 
     </application>
-
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"></uses-permission>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"></uses-permission>
-    <uses-feature
-        android:name="android.hardware.camera"
-        android:required="true" />
-
 
 </manifest>

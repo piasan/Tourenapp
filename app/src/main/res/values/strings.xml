@@ -42,6 +42,8 @@
     <string name="loadmore">Load more comments</string>
     <string name="photo">Photo</string>
     <string name="station">Station</string>
+    <string name="add_photo">Add photo</string>
+    <string name="remove_photo">Remove photo</string>
 
     <!-- TextView labels -->
     <string name="tour_name">Tour Name</string>
@@ -65,6 +67,8 @@
     <string name="unlock">Unlocks next part of the tour</string>
     <string name="num_attempts">Number of attempts:</string>
     <string name="leave_empty">(Leave blank for infinite attempts)</string>
+    <string name="stations">Stations</string>
+    <string name="noStations">No Stations</string>
 
 
     <!-- Spinner contents -->
@@ -110,6 +114,7 @@
     <string name="no_description">Description can\'t be empty</string>
     <string name="no_mission">Mission info missing</string>
     <string name="attempts_warning">Setting limited amount of attempts for missions that unlock another part of the tour is not recommended, because  users that run out of attempts aren\'t able to complete the tour! </string>
+    <string name="photo_error">Photo couldn\'t be saved</string>
 
     <!-- Content Description for images -->
     <string name="desc_google_icon">Google Logo</string>
