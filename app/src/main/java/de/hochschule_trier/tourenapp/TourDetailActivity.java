@@ -15,6 +15,8 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -22,6 +24,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import org.w3c.dom.Text;
 
@@ -125,8 +129,6 @@ public class TourDetailActivity extends AppCompatActivity implements View.OnClic
         loadStations();
 
     }
-
-
 
 
     @Override
@@ -342,7 +344,7 @@ public class TourDetailActivity extends AppCompatActivity implements View.OnClic
 
     }
 
-    public void loadStations(){
+    public void loadStations() {
 
         mDatabase.child("Stations").child("Tour" + tourID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -371,6 +373,8 @@ public class TourDetailActivity extends AppCompatActivity implements View.OnClic
 
     public void addStations() {
 
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+
         TextView noStations = (TextView) findViewById(R.id.noStations);
 
         LinearLayout stationList = (LinearLayout) findViewById(R.id.stationList);
@@ -390,7 +394,20 @@ public class TourDetailActivity extends AppCompatActivity implements View.OnClic
 
             TextView stationName = (TextView) stationView.findViewById(R.id.stationName);
             stationName.setText(stations.get(i).getName());
-            ImageView image = (ImageView) stationView.findViewById(R.id.imageView);
+
+            if(stations.get(i).getImageURL() != null) {
+                ImageView image = (ImageView) stationView.findViewById(R.id.imageView);
+
+                // Reference to an image file in Firebase Storage
+                StorageReference storageRef = storage.getReference().child(stations.get(i).getImageURL());
+
+
+                // Load the image using Glide
+                Glide.with(this /* context */)
+                        .using(new FirebaseImageLoader())
+                        .load(storageRef)
+                        .into(image);
+            }
 
 
             stationList.addView(stationView);

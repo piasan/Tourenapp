@@ -411,6 +411,7 @@ public class RecordTourActivity extends AppCompatActivity implements View.OnClic
 
                         //If creating Tour is cancelled, existing data will be deleted
                         mDatabase.child("Waypoints").child("Tour" + tourID).removeValue();
+                        mDatabase.child("Stations").child("Tour" + tourID).removeValue();
                         Intent stopIntent = new Intent(getApplicationContext(), GPSService.class);
                         stopService(stopIntent);
 
