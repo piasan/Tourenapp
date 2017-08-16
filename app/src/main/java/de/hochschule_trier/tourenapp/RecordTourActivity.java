@@ -51,6 +51,8 @@ public class RecordTourActivity extends AppCompatActivity implements View.OnClic
     private Location stationLocation;
     private Location photoLocation;
 
+    private Bitmap imageBitmap;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,6 +72,8 @@ public class RecordTourActivity extends AppCompatActivity implements View.OnClic
 
                 recording = true;
             }
+
+            imageBitmap = savedInstanceState.getParcelable("image");
         }
 
 
@@ -105,6 +109,7 @@ public class RecordTourActivity extends AppCompatActivity implements View.OnClic
     public void onSaveInstanceState(Bundle outState) {
         outState.putBoolean("recording", recording);
         outState.putString("tourID", tourID);
+        outState.putParcelable("image", imageBitmap);
         super.onSaveInstanceState(outState);
     }
 
@@ -236,7 +241,7 @@ public class RecordTourActivity extends AppCompatActivity implements View.OnClic
 
                     if (photoLocation != null) {
                         Bundle extras = data.getExtras();
-                        Bitmap imageBitmap = (Bitmap) extras.get("data");
+                        imageBitmap = (Bitmap) extras.get("data");
 
                         ByteArrayOutputStream baos = new ByteArrayOutputStream();
                         imageBitmap.compress(Bitmap.CompressFormat.JPEG, 50, baos);

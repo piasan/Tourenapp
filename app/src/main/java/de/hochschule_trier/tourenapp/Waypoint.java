@@ -45,7 +45,7 @@ public class Waypoint implements Serializable {
 
         this.imageURL = imageURL;
         this.latitude = latitude;
-        this.latitude = longitude;
+        this.longitude = longitude;
 
     }
 

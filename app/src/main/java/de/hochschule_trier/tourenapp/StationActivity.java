@@ -45,6 +45,7 @@ public class StationActivity extends AppCompatActivity implements View.OnClickLi
 
     private TextView addPhoto;
     private ImageView imageView;
+    private Bitmap imageBitmap;
 
     private byte[] imageData;
     private String imageFileName;
@@ -123,6 +124,15 @@ public class StationActivity extends AppCompatActivity implements View.OnClickLi
             }
         });
 
+
+        if(savedInstanceState != null){
+            imageBitmap = savedInstanceState.getParcelable("image");
+            if (imageBitmap != null){
+                imageView.setImageBitmap(imageBitmap);
+            }
+            imageFileName = savedInstanceState.getString("fileName");
+        }
+
         findViewById(R.id.ok_button).setOnClickListener(this);
         findViewById(R.id.cancel_button).setOnClickListener(this);
         addPhoto.setOnClickListener(this);
@@ -130,6 +140,13 @@ public class StationActivity extends AppCompatActivity implements View.OnClickLi
 
     }
 
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState){
+
+        outState.putParcelable("image", imageBitmap);
+        outState.putString("fileName", imageFileName);
+    }
 
     // Get message from other Activity
     @Override
@@ -141,7 +158,7 @@ public class StationActivity extends AppCompatActivity implements View.OnClickLi
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
             Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
+            imageBitmap = (Bitmap) extras.get("data");
 
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             imageBitmap.compress(Bitmap.CompressFormat.JPEG, 50, baos);
