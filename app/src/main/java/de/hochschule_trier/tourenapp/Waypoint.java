@@ -2,7 +2,7 @@ package de.hochschule_trier.tourenapp;
 
 import java.io.Serializable;
 
-public class Waypoint implements Serializable {
+class Waypoint implements Serializable {
 
     private double latitude;
     private double longitude;
@@ -18,21 +18,21 @@ public class Waypoint implements Serializable {
     }
 
     //Constructor for standard way points
-    public Waypoint(double latitude, double longitude) {
+    Waypoint(double latitude, double longitude) {
 
         this.latitude = latitude;
         this.longitude = longitude;
 
     }
 
-    public Waypoint(double latitude, double longitude, String comment) {
+    Waypoint(double latitude, double longitude, String comment) {
 
         this.latitude = latitude;
         this.longitude = longitude;
         this.comment = comment;
     }
 
-    public Waypoint(double latitude, double longitude, String comment, String stationID) {
+    Waypoint(double latitude, double longitude, String comment, String stationID) {
 
         this.latitude = latitude;
         this.longitude = longitude;
@@ -41,7 +41,7 @@ public class Waypoint implements Serializable {
 
     }
 
-    public Waypoint(String imageURL, double latitude, double longitude) {
+    Waypoint(String imageURL, double latitude, double longitude) {
 
         this.imageURL = imageURL;
         this.latitude = latitude;

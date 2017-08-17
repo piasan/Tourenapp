@@ -2,18 +2,18 @@ package de.hochschule_trier.tourenapp;
 
 import java.util.Map;
 
-public class User {
+class User {
 
-    String name;
-    String status;
-    long registrationDate;
-    long lastLogin;
-    Map<String, Double> finishedTours;
+    private String name;
+    private String status;
+    private long registrationDate;
+    private long lastLogin;
+    private Map<String, Double> finishedTours;
 
     public User() {
     }
 
-    public User(String name, long registrationDate){
+    User(String name, long registrationDate){
 
         this.name = name;
         this.status = "User";

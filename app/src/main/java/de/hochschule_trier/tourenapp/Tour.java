@@ -3,8 +3,6 @@ package de.hochschule_trier.tourenapp;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.List;
-
 public class Tour implements Parcelable {
 
 

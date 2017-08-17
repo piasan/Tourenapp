@@ -322,8 +322,6 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
                     int r = data.getIntExtra("Radius", 10);
                     direction = data.getStringExtra("Direction");
                     orderBy = data.getStringExtra("OrderBy");
-                    tourName = data.getStringExtra("TourName");
-                    authorName = data.getStringExtra("AuthorName");
 
                     editRadius.setText("" + r);
                     loadDatabase(r * 1000, orderBy, direction, tourName, authorName);
