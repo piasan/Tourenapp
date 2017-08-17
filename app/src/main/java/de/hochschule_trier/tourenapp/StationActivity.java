@@ -50,6 +50,8 @@ public class StationActivity extends AppCompatActivity implements View.OnClickLi
     private byte[] imageData;
     private String imageFileName;
 
+    private boolean mission;
+
     private LinearLayout missionLayout;
 
     private StorageReference storageRef;
@@ -131,6 +133,20 @@ public class StationActivity extends AppCompatActivity implements View.OnClickLi
                 imageView.setImageBitmap(imageBitmap);
             }
             imageFileName = savedInstanceState.getString("fileName");
+            editStationName.setText(savedInstanceState.getString("StationName"));
+            editStationDescription.setText(savedInstanceState.getString("StationDescription"));
+            if(savedInstanceState.getBoolean("mission")){
+                mission = true;
+                missionLayout.setVisibility(View.VISIBLE);
+                missionCheckbox.setChecked(true);
+
+            }
+
+            editQuestion.setText(savedInstanceState.getString("Question"));
+            editAnswer.setText(savedInstanceState.getString("Answer"));
+            editAttempts.setText(savedInstanceState.getString("Attempts"));
+            multiCheckbox.setChecked(savedInstanceState.getBoolean("Mystery"));
+
         }
 
         findViewById(R.id.ok_button).setOnClickListener(this);
@@ -146,6 +162,14 @@ public class StationActivity extends AppCompatActivity implements View.OnClickLi
 
         outState.putParcelable("image", imageBitmap);
         outState.putString("fileName", imageFileName);
+        outState.putString("StationName", editStationName.getText().toString());
+        outState.putString("StationDescription", editStationDescription.getText().toString());
+        outState.putBoolean("mission", missionCheckbox.isChecked());
+        outState.putString("Question", editQuestion.getText().toString());
+        outState.putString("Answer", editAnswer.getText().toString());
+        outState.putBoolean("Mystery", multiCheckbox.isChecked());
+        outState.putString("Attempts", editAttempts.getText().toString());
+
     }
 
     // Get message from other Activity
@@ -159,10 +183,6 @@ public class StationActivity extends AppCompatActivity implements View.OnClickLi
 
             Bundle extras = data.getExtras();
             imageBitmap = (Bitmap) extras.get("data");
-
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            imageBitmap.compress(Bitmap.CompressFormat.JPEG, 50, baos);
-            imageData = baos.toByteArray();
 
             imageView.setImageBitmap(imageBitmap);
 
@@ -199,7 +219,7 @@ public class StationActivity extends AppCompatActivity implements View.OnClickLi
                     Toast.makeText(this, getResources().getString(R.string.no_name), Toast.LENGTH_SHORT).show();
                 } else {
 
-                    boolean mission = false;
+                    mission = false;
 
                     Intent intent = new Intent();
                     intent.putExtra("STATION_NAME", stationName);
@@ -225,7 +245,12 @@ public class StationActivity extends AppCompatActivity implements View.OnClickLi
                         }
                     }
 
-                    if (imageData != null) {
+                    if (imageBitmap != null) {
+
+                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                        imageBitmap.compress(Bitmap.CompressFormat.JPEG, 50, baos);
+                        imageData = baos.toByteArray();
+
                         UploadTask uploadTask = storageRef.child(imageFileName).putBytes(imageData);
                         uploadTask.addOnFailureListener(new OnFailureListener() {
 
