@@ -69,6 +69,7 @@
     <string name="leave_empty">(Leave blank for infinite attempts)</string>
     <string name="stations">Stations</string>
     <string name="noStations">No Stations</string>
+    <string name="tours_with_tags">Show only tours with following tags:</string>
 
 
     <!-- Spinner contents -->

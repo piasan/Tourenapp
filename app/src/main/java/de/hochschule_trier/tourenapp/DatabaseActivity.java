@@ -47,6 +47,7 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
 
     private String orderBy;
     private String direction;
+    private ArrayList<String> tags;
 
     private boolean used;
 
@@ -73,6 +74,7 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
 
         touren = new ArrayList<>();
         resultList = new ArrayList<>();
+        tags = new ArrayList<>();
 
 
         // Get an instance of the database
@@ -112,6 +114,7 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
                 resultList = savedInstanceState.getParcelableArrayList("Touren");
             orderBy = savedInstanceState.getString("OrderBy");
             direction = savedInstanceState.getString("Direction");
+            tags = savedInstanceState.getStringArrayList("Tags");
         }
 
     }
@@ -141,7 +144,7 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
         } else {
 
             radius = Integer.parseInt(editRadius.getText().toString()) * 1000;
-            loadDatabase(radius, orderBy, direction);
+            loadDatabase(radius, orderBy, direction, tags);
         }
 
 
@@ -160,6 +163,7 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
         outState.putBoolean("saved", true);
         outState.putString("OrderBy", orderBy);
         outState.putString("Direction", direction);
+        outState.putStringArrayList("Tags", tags);
 
         super.onSaveInstanceState(outState);
     }
@@ -176,7 +180,7 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
 
     }
 
-    public void loadDatabase(int r, final String orderBy, final String direction) {
+    public void loadDatabase(int r, final String orderBy, final String direction, final ArrayList<String> tags) {
 
         //Check Permissions for GPS Usage
         //If permission is not granted, service can't be started.
@@ -214,7 +218,24 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
 
                     tour = snapshot.getValue(Tour.class);
 
-                    touren.add(tour);
+                    boolean matching = true;
+
+                    for (int i = 0; i < tags.size(); i++) {
+
+                        if (tags.get(i).length() > 0) {
+
+                            boolean b = snapshot.child("Tags").child(tags.get(i)).getValue(Boolean.class);
+                            if (!b) {
+                                matching = false;
+                                break;
+                            }
+
+                        }
+
+                    }
+
+                    if (matching)
+                        touren.add(tour);
                 }
 
                 for (int i = 0; i < touren.size(); i++) {
@@ -320,9 +341,10 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
                     int r = data.getIntExtra("Radius", 10);
                     direction = data.getStringExtra("Direction");
                     orderBy = data.getStringExtra("OrderBy");
+                    tags = data.getStringArrayListExtra("TAGS");
 
                     editRadius.setText("" + r);
-                    loadDatabase(r * 1000, orderBy, direction);
+                    loadDatabase(r * 1000, orderBy, direction, tags);
                 }
 
 
@@ -358,7 +380,7 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
 
                 used = true;
                 radius = Integer.parseInt(editRadius.getText().toString()) * 1000;
-                loadDatabase(radius, orderBy, direction);
+                loadDatabase(radius, orderBy, direction, tags);
                 break;
 
             case R.id.searchTextView:
