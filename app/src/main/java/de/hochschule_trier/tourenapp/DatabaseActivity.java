@@ -47,8 +47,6 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
 
     private String orderBy;
     private String direction;
-    private String tourName;
-    private String authorName;
 
     private boolean used;
 
@@ -143,7 +141,7 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
         } else {
 
             radius = Integer.parseInt(editRadius.getText().toString()) * 1000;
-            loadDatabase(radius, orderBy, direction, tourName, authorName);
+            loadDatabase(radius, orderBy, direction);
         }
 
 
@@ -178,7 +176,7 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
 
     }
 
-    public void loadDatabase(int r, final String orderBy, final String direction, String tourName, String authorName) {
+    public void loadDatabase(int r, final String orderBy, final String direction) {
 
         //Check Permissions for GPS Usage
         //If permission is not granted, service can't be started.
@@ -324,7 +322,7 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
                     orderBy = data.getStringExtra("OrderBy");
 
                     editRadius.setText("" + r);
-                    loadDatabase(r * 1000, orderBy, direction, tourName, authorName);
+                    loadDatabase(r * 1000, orderBy, direction);
                 }
 
 
@@ -360,7 +358,7 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
 
                 used = true;
                 radius = Integer.parseInt(editRadius.getText().toString()) * 1000;
-                loadDatabase(radius, orderBy, direction, tourName, authorName);
+                loadDatabase(radius, orderBy, direction);
                 break;
 
             case R.id.searchTextView:

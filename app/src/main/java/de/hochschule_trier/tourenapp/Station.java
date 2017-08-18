@@ -5,6 +5,7 @@ public class Station {
     private String name;
     private String description;
     private String imageURL;
+    private Mission mission;
 
     public Station(){}
 
@@ -28,6 +29,10 @@ public class Station {
         return imageURL;
     }
 
+    public Mission getMission(){
+        return mission;
+    }
+
 
     //Setters
     public void setDescription(String description) {
@@ -40,6 +45,10 @@ public class Station {
 
     public void setImageURL(String imageURL) {
         this.imageURL = imageURL;
+    }
+
+    public void setMission (Mission mission){
+        this.mission = mission;
     }
 
 }

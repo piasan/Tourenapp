@@ -349,6 +349,10 @@ public class TourDetailActivity extends AppCompatActivity implements View.OnClic
 
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     station = snapshot.getValue(Station.class);
+
+                    Mission mission = snapshot.child("Mission").getValue(Mission.class);
+
+                    station.setMission(mission);
                     stations.add(station);
 
                 }
@@ -392,7 +396,7 @@ public class TourDetailActivity extends AppCompatActivity implements View.OnClic
             TextView stationName = (TextView) stationView.findViewById(R.id.stationName);
             stationName.setText(stations.get(i).getName());
 
-            if(stations.get(i).getImageURL() != null) {
+            if (stations.get(i).getImageURL() != null) {
                 ImageView image = (ImageView) stationView.findViewById(R.id.imageView);
 
                 // Reference to an image file in Firebase Storage
@@ -408,6 +412,37 @@ public class TourDetailActivity extends AppCompatActivity implements View.OnClic
 
 
             stationList.addView(stationView);
+
+            //if station is unocking the rest of the tour, following stations will be hidden
+            if (stations.get(i).getMission() != null) {
+
+                if (stations.get(i).getMission().isUnlocking())
+
+                    for (int j = i + 1; j < stations.size(); j++) {
+
+                        inflater = LayoutInflater.from(getApplicationContext());
+
+                        stationView = inflater.inflate(R.layout.station_item, null);
+
+                        stationName = (TextView) stationView.findViewById(R.id.stationName);
+                        stationName.setText(stations.get(i).getName());
+                        stationName.setText("??????");
+
+                        ImageView image = (ImageView) stationView.findViewById(R.id.imageView);
+
+                        //getResources().getDrawable(int id) method was deprecated in API level 22
+                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                            image.setImageDrawable(getApplicationContext().getDrawable(R.drawable.mystery_icon));
+                        } else {
+                            image.setImageDrawable(getResources().getDrawable(R.drawable.mystery_icon));
+                        }
+
+                        stationList.addView(stationView);
+
+                    }
+
+                break;
+            }
 
 
         }

@@ -73,8 +73,8 @@
     <string name="cancel_rec_message">Soll die Aufzeichnung wirklich abgebrochen werden? Alle Wegpunkte gehen verloren!</string>
     <string name="attempts_warning">Es wird nicht empfohlen, die Anzahl an Versuchen für eine Aufgabe, die einen weiteren Tourabschnitt freischaltet, zu begrenzen, da die Tour unter Umständen nicht mehr abgeschlossen werden kann!</string>
     <string name="photo_error">Foto konnte nicht gespeichert werden</string>
-    <string name="addPhoto">Foto hinzufügen</string>
     <string name="remove_photo">Foto entfernen</string>
     <string name="stations">Stationen</string>
     <string name="noStations">Keine Stationen</string>
+    <string name="add_photo">Foto hinzufügen</string>
 </resources>
