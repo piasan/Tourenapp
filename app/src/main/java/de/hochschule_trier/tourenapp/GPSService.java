@@ -22,7 +22,7 @@ public class GPSService extends Service{
     //Location Manager
     private static final String TAG = "GPSService";
     private LocationManager mLocationManager = null;
-    private static final int LOCATION_INTERVAL = 30000; //min time in milliseconds
+    private static final int LOCATION_INTERVAL = 5000; //min time in milliseconds
     private static final float LOCATION_DISTANCE = 10f; //min distance in meters
 
 
