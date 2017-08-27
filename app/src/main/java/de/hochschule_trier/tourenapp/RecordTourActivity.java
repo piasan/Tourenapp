@@ -34,6 +34,8 @@ import java.util.Date;
 public class RecordTourActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final int MY_PERMISSION_ACCESS_COARSE_LOCATION = 11;
+    private static final int MY_PERMISSION_ACCESS_FINE_LOCATION = 12;
+
     private static final int NEW_TOUR_REQUEST_CODE = 2;
     private static final int NEW_COMMENT_REQUEST_CODE = 3;
     private static final int NEW_STATION_REQUEST_CODE = 4;
@@ -228,12 +230,12 @@ public class RecordTourActivity extends AppCompatActivity implements View.OnClic
 
                     //Check Permissions for GPS Usage
                     //If permission is not granted, service can't be started.
-                    if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION)
+                    if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
                             != PackageManager.PERMISSION_GRANTED) {
 
                         ActivityCompat.requestPermissions(this,
-                                new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION},
-                                MY_PERMISSION_ACCESS_COARSE_LOCATION);
+                                new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                                MY_PERMISSION_ACCESS_FINE_LOCATION);
 
                     }
 
@@ -317,12 +319,12 @@ public class RecordTourActivity extends AppCompatActivity implements View.OnClic
         LocationManager mLocationManager;
         //Check Permissions for GPS Usage
         //If permission is not granted, service can't be started.
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION)
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
 
             ActivityCompat.requestPermissions(this,
-                    new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION},
-                    MY_PERMISSION_ACCESS_COARSE_LOCATION);
+                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                    MY_PERMISSION_ACCESS_FINE_LOCATION);
 
         }
 

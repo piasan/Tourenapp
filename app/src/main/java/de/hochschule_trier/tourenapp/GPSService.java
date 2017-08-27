@@ -1,150 +1,173 @@
 package de.hochschule_trier.tourenapp;
 
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-public class GPSService extends Service{
+public class GPSService extends Service implements
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener,
+        LocationListener {
 
     //Firebase database
     private DatabaseReference mDatabase;
+
+    private boolean requestProgress;
+
+    private GoogleApiClient mGoogleApiClient;
+    private LocationRequest mLocationRequest;
+
+    private Location lastLocation;
 
     private String tourID;
 
     //Location Manager
     private static final String TAG = "GPSService";
-    private LocationManager mLocationManager = null;
-    private static final int LOCATION_INTERVAL = 5000; //min time in milliseconds
-    private static final float LOCATION_DISTANCE = 10f; //min distance in meters
-
-
-
-    //Location Listener
-    private class LocationListener implements android.location.LocationListener{
-        Location mLastLocation;
-        public LocationListener(String provider)
-        {
-            Log.d(TAG, "LocationListener " + provider);
-            mLastLocation = new Location(provider);
-        }
-
-        @Override
-        public void onLocationChanged(Location location)
-        {
-            Log.d(TAG, "onLocationChanged: " + location);
-            mLastLocation.set(location);
-
-            //Write last location into the database
-            Waypoint waypoint = new Waypoint(location.getLatitude(), location.getLongitude());
-            mDatabase.child("Waypoints").child("Tour" + tourID).push().setValue(waypoint);
-
-        }
-
-        @Override
-        public void onProviderDisabled(String provider)
-        {
-            Log.d(TAG, "onProviderDisabled: " + provider);
-        }
-
-        @Override
-        public void onProviderEnabled(String provider)
-        {
-            Log.d(TAG, "onProviderEnabled: " + provider);
-        }
-
-        @Override
-        public void onStatusChanged(String provider, int status, Bundle extras)
-        {
-            Log.d(TAG, "onStatusChanged: " + provider);
-        }
-    }
-
-
-
-    LocationListener[] mLocationListeners = new LocationListener[] {
-            new LocationListener(LocationManager.GPS_PROVIDER),
-            new LocationListener(LocationManager.NETWORK_PROVIDER)
-    };
 
 
     @Override
-    public IBinder onBind(Intent arg0)
-    {
+    public IBinder onBind(Intent arg0) {
         return null;
     }
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId)
-    {
+    public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "onStartCommand");
         super.onStartCommand(intent, flags, startId);
 
         tourID = intent.getStringExtra("TOURID");
+
+        if (!mGoogleApiClient.isConnected() || !mGoogleApiClient.isConnecting() && !requestProgress) {
+            requestProgress = true;
+            mGoogleApiClient.connect();
+        }
+
         return START_STICKY;
     }
 
     @Override
-    public void onCreate()
-    {
+    public void onCreate() {
 
         // Get an instance of the database
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         mDatabase = database.getReference();
 
+        if (mGoogleApiClient == null)
+            buildGoogleApiClient();
+        createLocationRequest();
 
-        Log.d(TAG, "onCreate");
-        initializeLocationManager();
-        try {
-            mLocationManager.requestLocationUpdates(
-                    LocationManager.GPS_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE,
-                    mLocationListeners[0]);
-        } catch (java.lang.SecurityException ex) {
-            Log.i(TAG, "fail to request location update, ignore", ex);
-        } catch (IllegalArgumentException ex) {
-            Log.d(TAG, "gps provider does not exist " + ex.getMessage());
-        }
-        try {
-            mLocationManager.requestLocationUpdates(
-                    LocationManager.NETWORK_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE,
-                    mLocationListeners[1]);
-        } catch (java.lang.SecurityException ex) {
-            Log.i(TAG, "fail to request location update, ignore", ex);
-        } catch (IllegalArgumentException ex) {
-            Log.d(TAG, "network provider does not exist, " + ex.getMessage());
-        }
 
+    }
+
+
+    protected synchronized void buildGoogleApiClient() {
+        this.mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+    }
+
+
+    protected void createLocationRequest() {
+        mLocationRequest = LocationRequest.create();
+        mLocationRequest.setInterval(2000);
+        mLocationRequest.setFastestInterval(1000);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
 
 
     @Override
-    public void onDestroy()
-    {
+    public void onDestroy() {
         Log.d(TAG, "onDestroy");
+
+        this.requestProgress = false;
+
+        if (this.mGoogleApiClient != null) {
+            this.mGoogleApiClient.unregisterConnectionCallbacks(this);
+            this.mGoogleApiClient.unregisterConnectionFailedListener(this);
+            this.mGoogleApiClient.disconnect();
+            // Destroy the current location client
+            this.mGoogleApiClient = null;
+        }
         super.onDestroy();
 
-        if (mLocationManager != null) {
-            for (int i = 0; i < mLocationListeners.length; i++) {
-                try {
-                    mLocationManager.removeUpdates(mLocationListeners[i]);
-                } catch (Exception ex) {
-                    Log.i(TAG, "fail to remove location listners, ignore", ex);
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+
+        //noinspection MissingPermission
+        LocationServices.FusedLocationApi.requestLocationUpdates(this.mGoogleApiClient,
+                mLocationRequest, this);
+
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        // Report to the UI that the location was updated
+        String msg = Double.toString(location.getLatitude()) + "," +
+                Double.toString(location.getLongitude());
+        Log.d(TAG, msg);
+
+
+        if (location != null) {
+
+            Log.d(TAG, "Accuracy: "+ location.getAccuracy());
+
+            if (lastLocation != null) {
+
+                if (lastLocation.distanceTo(location) >= 10) {
+
+                    lastLocation = location;
+                    Log.d(TAG, "saved");
+
+                    //Write last location into the database
+                    Waypoint waypoint = new Waypoint(location.getLatitude(), location.getLongitude());
+                    mDatabase.child("Waypoints").child("Tour" + tourID).push().setValue(waypoint);
                 }
+                else
+                    Log.d(TAG, "not saved");
+
+            } else {
+
+                lastLocation = location;
+
             }
+
         }
     }
 
-    private void initializeLocationManager() {
-        Log.d(TAG, "initializeLocationManager");
-        if (mLocationManager == null) {
-            mLocationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+    @Override
+    public void onConnectionSuspended(int i) {
+        // Turn off the request flag
+        requestProgress = false;
+        // Destroy the current location client
+        mGoogleApiClient = null;
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        requestProgress = false;
+
+        if (connectionResult.hasResolution()) {
+
+            // If no resolution is available, display an error dialog
+        } else {
+
+            //
+
         }
     }
 
