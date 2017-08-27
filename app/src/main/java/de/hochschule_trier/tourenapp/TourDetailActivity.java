@@ -506,6 +506,7 @@ public class TourDetailActivity extends AppCompatActivity implements View.OnClic
 
                     Intent mapsIntent = new Intent(this, MapsActivity.class);
                     mapsIntent.putExtra("WPList", wrapper);
+                    mapsIntent.putExtra("TourID", tourID);
                     startActivity(mapsIntent);
                 }
                 break;

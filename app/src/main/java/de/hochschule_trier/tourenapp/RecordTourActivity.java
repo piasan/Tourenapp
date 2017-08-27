@@ -179,7 +179,7 @@ public class RecordTourActivity extends AppCompatActivity implements View.OnClic
 
                         String stationID = mDatabase.child("Stations").child("Tour" + tourID).push().getKey();
                         Waypoint wp = new Waypoint(stationLocation.getLatitude(), stationLocation.getLongitude(),
-                                "Station", stationID);
+                                "Station", stationID, false);
 
                         Station station = new Station(stationName, stationDescription);
 
@@ -187,8 +187,6 @@ public class RecordTourActivity extends AppCompatActivity implements View.OnClic
                             station.setImageURL(imageName);
                         }
 
-                        mDatabase.child("Waypoints").child("Tour" + tourID).push().setValue(wp);
-                        mDatabase.child("Stations").child("Tour" + tourID).child(stationID).setValue(station);
 
                         if (data.getBooleanExtra("MISSION", false)) {
 
@@ -210,9 +208,15 @@ public class RecordTourActivity extends AppCompatActivity implements View.OnClic
 
                             Mission mission = new Mission(question, answer, multi, numAttempts);
 
+                            wp.setUnlocking(multi);
+
                             mDatabase.child("Stations").child("Tour" + tourID)
                                     .child(stationID).child("Mission").setValue(mission);
                         }
+
+
+                        mDatabase.child("Waypoints").child("Tour" + tourID).push().setValue(wp);
+                        mDatabase.child("Stations").child("Tour" + tourID).child(stationID).setValue(station);
 
 
                     } else

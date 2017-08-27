@@ -9,6 +9,7 @@ class Waypoint implements Serializable {
     private String comment;
     private String stationID;
     private String imageURL;
+    private boolean unlocking;
 
     private static final long serialVersionUID = 1L;
 
@@ -32,12 +33,13 @@ class Waypoint implements Serializable {
         this.comment = comment;
     }
 
-    Waypoint(double latitude, double longitude, String comment, String stationID) {
+    Waypoint(double latitude, double longitude, String comment, String stationID, boolean unlocking) {
 
         this.latitude = latitude;
         this.longitude = longitude;
         this.comment = comment;
         this.stationID = stationID;
+        this.unlocking = unlocking;
 
     }
 
@@ -71,6 +73,10 @@ class Waypoint implements Serializable {
         return imageURL;
     }
 
+    public boolean isUnlocking(){
+        return unlocking;
+    }
+
 
     //Setters
     public void setLatitude(double latitude) {
@@ -91,5 +97,9 @@ class Waypoint implements Serializable {
 
     public void setImageURL(String imageURL) {
         this.imageURL = imageURL;
+    }
+
+    public void setUnlocking(boolean unlocking){
+        this.unlocking = unlocking;
     }
 }
