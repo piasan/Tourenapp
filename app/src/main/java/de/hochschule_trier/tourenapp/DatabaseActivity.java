@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -196,12 +197,13 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
         LocationManager mLocationManager =
                 (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
 
-        while (currentLocation == null)
-            currentLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        currentLocation = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 
         radius = r;
 
-        long index = TourIndex.getIndex(currentLocation);
+        if(currentLocation != null) {
+            long index = TourIndex.getIndex(currentLocation);
+        }
 
 
         // Read from the database
@@ -256,24 +258,26 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
                                         waypoint = snapshot1.getValue(Waypoint.class);
                                     }
 
-                                    //Check distance to tour from currentLocation
-                                    Location loc = new Location("WP");
-                                    loc.setLatitude(waypoint.getLatitude());
-                                    loc.setLongitude(waypoint.getLongitude());
+                                    if(currentLocation != null) {
+                                        //Check distance to tour from currentLocation
+                                        Location loc = new Location("WP");
+                                        loc.setLatitude(waypoint.getLatitude());
+                                        loc.setLongitude(waypoint.getLongitude());
 
-                                    //add distance to tour
-                                    double dist = loc.distanceTo(currentLocation);
-                                    if (dist < radius) {
+                                        //add distance to tour
+                                        double dist = loc.distanceTo(currentLocation);
+                                        if (dist < radius) {
 
-                                        touren.get(j).setDistance(dist);
+                                            touren.get(j).setDistance(dist);
 
-                                        if (orderBy.equals("tourID")) {
-                                            sortByDistance(resultList, touren.get(j));
-                                        } else {
-                                            if (direction.equals("descending"))
-                                                resultList.add(0, touren.get(j));
-                                            else
-                                                resultList.add(touren.get(j));
+                                            if (orderBy.equals("tourID")) {
+                                                sortByDistance(resultList, touren.get(j));
+                                            } else {
+                                                if (direction.equals("descending"))
+                                                    resultList.add(0, touren.get(j));
+                                                else
+                                                    resultList.add(touren.get(j));
+                                            }
                                         }
                                     }
 
