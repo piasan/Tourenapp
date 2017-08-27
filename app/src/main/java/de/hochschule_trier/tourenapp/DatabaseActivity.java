@@ -16,6 +16,9 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -29,7 +32,7 @@ import java.util.ArrayList;
 public class DatabaseActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemClickListener {
 
     private final static String TAG = "DatabaseActivity";
-    private final static int MY_PERMISSION_ACCESS_COARSE_LOCATION = 11;
+    private final static int MY_PERMISSION_ACCESS_FINE_LOCATION = 12;
     private final static int SEARCH_REQUEST_CODE = 4;
 
     private DatabaseReference mDatabase;
@@ -37,6 +40,8 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
 
     private Location currentLocation;
     private Waypoint waypoint;
+    private FusedLocationProviderClient mFusedLocationClient;
+
 
     //Database Snapshot Array List
     private static ArrayList<Tour> touren;
@@ -56,6 +61,8 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
     private ListView listView;
 
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,6 +70,8 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
 
         // Current Firebase User
         user = FirebaseAuth.getInstance().getCurrentUser();
+
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         // Buttons
         findViewById(R.id.sign_out_button).setOnClickListener(this);
@@ -181,23 +190,25 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
 
     }
 
+
+    public void checkPermission(){
+
+
+    }
+
     public void loadDatabase(int r, final String orderBy, final String direction, final ArrayList<String> tags) {
 
         //Check Permissions for GPS Usage
         //If permission is not granted, service can't be started.
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION)
+
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
 
             ActivityCompat.requestPermissions(this,
-                    new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION},
-                    MY_PERMISSION_ACCESS_COARSE_LOCATION);
+                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                    MY_PERMISSION_ACCESS_FINE_LOCATION);
 
         }
-
-        LocationManager mLocationManager =
-                (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
-
-        currentLocation = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 
         radius = r;
 
@@ -413,4 +424,38 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
         startActivity(TourDetailIntent);
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSION_ACCESS_FINE_LOCATION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    //noinspection MissingPermission
+                    mFusedLocationClient.getLastLocation()
+                            .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                                @Override
+                                public void onSuccess(Location location) {
+                                    // Got last known location. In some rare situations this can be null.
+                                    if (location != null) {
+                                        currentLocation = location;
+                                    }
+                                }
+                            });
+
+
+                } else {
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                break;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
+    }
 }
