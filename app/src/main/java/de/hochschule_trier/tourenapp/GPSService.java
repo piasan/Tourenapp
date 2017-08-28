@@ -121,10 +121,10 @@ public class GPSService extends Service implements
                 Double.toString(location.getLongitude());
         Log.d(TAG, msg);
 
+        Log.d(TAG, "Accuracy: " + location.getAccuracy());
 
-        if (location != null) {
+        if (location.getAccuracy() < 30) {
 
-            Log.d(TAG, "Accuracy: "+ location.getAccuracy());
 
             if (lastLocation != null) {
 
@@ -136,18 +136,22 @@ public class GPSService extends Service implements
                     //Write last location into the database
                     Waypoint waypoint = new Waypoint(location.getLatitude(), location.getLongitude());
                     mDatabase.child("Waypoints").child("Tour" + tourID).push().setValue(waypoint);
-                }
-                else
+                } else
                     Log.d(TAG, "not saved");
 
             } else {
+                //Write last location into the database
+                Waypoint waypoint = new Waypoint(location.getLatitude(), location.getLongitude());
+                mDatabase.child("Waypoints").child("Tour" + tourID).push().setValue(waypoint);
 
                 lastLocation = location;
+                Log.d(TAG, "saved");
 
             }
-
-        }
+        } else
+            Log.d(TAG, "not saved (accuracy)");
     }
+
 
     @Override
     public void onConnectionSuspended(int i) {

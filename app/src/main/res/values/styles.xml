@@ -13,8 +13,8 @@
 
     <!-- Dark Buttons -->
     <style name="ThemeOverlay.MyDarkButton" parent="ThemeOverlay.AppCompat.Dark">
-        <item name="colorButtonNormal">@color/blue_grey_500</item>
-        <item name="android:textColor">@android:color/white</item>
+        <item name="colorButtonNormal">@color/border_dark</item>
+        <item name="android:textColor">@color/bg_gray_light</item>
     </style>
 
 

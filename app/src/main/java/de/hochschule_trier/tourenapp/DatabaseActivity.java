@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
@@ -17,6 +18,9 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -42,6 +46,9 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
     private Waypoint waypoint;
     private FusedLocationProviderClient mFusedLocationClient;
 
+    private LocationListener locationListener;
+    private LocationManager locationManager;
+
 
     //Database Snapshot Array List
     private static ArrayList<Tour> touren;
@@ -61,8 +68,6 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
     private ListView listView;
 
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,6 +77,7 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
         user = FirebaseAuth.getInstance().getCurrentUser();
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
 
         // Buttons
         findViewById(R.id.sign_out_button).setOnClickListener(this);
@@ -154,7 +160,7 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
         } else {
 
             radius = Integer.parseInt(editRadius.getText().toString()) * 1000;
-            loadDatabase(radius, orderBy, direction, tags);
+            checkLocation();
         }
 
 
@@ -191,16 +197,10 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
     }
 
 
-    public void checkPermission(){
-
-
-    }
-
-    public void loadDatabase(int r, final String orderBy, final String direction, final ArrayList<String> tags) {
+    public void checkLocation() {
 
         //Check Permissions for GPS Usage
-        //If permission is not granted, service can't be started.
-
+        //If permission is not granted, request Permission
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
 
@@ -208,11 +208,82 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
                     new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
                     MY_PERMISSION_ACCESS_FINE_LOCATION);
 
+        } else {
+
+            //If Permission is already granted, check the current location;
+
+
+            //noinspection MissingPermission
+            mFusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            // Got last known location. In some rare situations this can be null.
+                            if (location != null) {
+                                currentLocation = location;
+                                loadDatabase(radius, orderBy, direction, tags);
+
+                            }
+                            //if no last location is known, keep checking for location updates
+                            else {
+
+                                locationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+
+                                locationListener = new LocationListener() {
+
+                                    @Override
+                                    public void onLocationChanged(android.location.Location location) {
+                                        double latitude = location.getLatitude();
+                                        double longitude = location.getLongitude();
+                                        String msg = "  Latitude: " + latitude + " Longitude: " + longitude + " Accuracy: " + location.getAccuracy();
+                                        Log.d(TAG, msg);
+
+                                        if (location.getAccuracy() < 20) {
+                                            currentLocation = location;
+                                            locationManager.removeUpdates(locationListener);
+                                            locationManager = null;
+                                            loadDatabase(radius, orderBy, direction, tags);
+                                            Log.d(TAG, "Stopped tracking");
+                                        }
+
+                                    }
+
+                                    @Override
+                                    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+                                    }
+
+                                    @Override
+                                    public void onProviderEnabled(String provider) {
+
+                                    }
+
+                                    @Override
+                                    public void onProviderDisabled(String provider) {
+
+                                    }
+                                };
+
+                                //noinspection MissingPermission
+                                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
+                                        1000,
+                                        0, locationListener);
+
+
+                            }
+                        }
+                    });
+
         }
+    }
+
+
+    public void loadDatabase(int r, final String orderBy, final String direction, final ArrayList<String> tags) {
+
 
         radius = r;
 
-        if(currentLocation != null) {
+        if (currentLocation != null) {
             long index = TourIndex.getIndex(currentLocation);
         }
 
@@ -269,7 +340,7 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
                                         waypoint = snapshot1.getValue(Waypoint.class);
                                     }
 
-                                    if(currentLocation != null) {
+                                    if (currentLocation != null) {
                                         //Check distance to tour from currentLocation
                                         Location loc = new Location("WP");
                                         loc.setLatitude(waypoint.getLatitude());
@@ -353,13 +424,13 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
 
                 if (resultCode == RESULT_OK) {
 
-                    int r = data.getIntExtra("Radius", 10);
+                    int r = data.getIntExtra("Radius", 10) * 1000;
                     direction = data.getStringExtra("Direction");
                     orderBy = data.getStringExtra("OrderBy");
                     tags = data.getStringArrayListExtra("TAGS");
 
                     editRadius.setText("" + r);
-                    loadDatabase(r * 1000, orderBy, direction, tags);
+                    checkLocation();
                 }
 
 
@@ -395,7 +466,7 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
 
                 used = true;
                 radius = Integer.parseInt(editRadius.getText().toString()) * 1000;
-                loadDatabase(radius, orderBy, direction, tags);
+                checkLocation();
                 break;
 
             case R.id.searchTextView:
@@ -433,17 +504,7 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-                    //noinspection MissingPermission
-                    mFusedLocationClient.getLastLocation()
-                            .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                                @Override
-                                public void onSuccess(Location location) {
-                                    // Got last known location. In some rare situations this can be null.
-                                    if (location != null) {
-                                        currentLocation = location;
-                                    }
-                                }
-                            });
+                    checkLocation();
 
 
                 } else {
@@ -453,9 +514,6 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
                 }
                 break;
             }
-
-            // other 'case' lines to check for other
-            // permissions this app might request
         }
     }
 }

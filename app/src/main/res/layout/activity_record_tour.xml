@@ -17,6 +17,18 @@
         android:visibility="gone"
         tools:visibility="visible"/>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/holo_red_light"
+        android:layout_below="@id/textView"
+        android:layout_margin="20dp"
+        android:gravity="center_horizontal"
+        android:text="STANDORT UNGENAU: ES WERDEN KEINE WEGPUNKTE AUFGEZEICHNET"
+        android:visibility="invisible"
+        android:textStyle="bold"
+        tools:visibility="visible" />
+
 
     <LinearLayout
         android:id="@+id/layout_rec_active"

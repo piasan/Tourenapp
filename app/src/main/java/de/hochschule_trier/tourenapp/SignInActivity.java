@@ -1,12 +1,12 @@
 package de.hochschule_trier.tourenapp;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,8 +39,10 @@ public class SignInActivity extends AppCompatActivity implements
     private static final int RC_SIGN_IN = 9001;
 
     private GoogleApiClient mGoogleApiClient;
-    private TextView mStatusTextView;
-    private ProgressDialog mProgressDialog;
+    private TextView mOptionalStatus;
+    private ProgressBar mProgressBar;
+
+    private boolean signingIn;
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -50,9 +52,14 @@ public class SignInActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
 
+        if(savedInstanceState != null){
+            signingIn = savedInstanceState.getBoolean("signingIn");
+        }
+
 
         // Views
-        mStatusTextView = (TextView) findViewById(R.id.status);
+        mOptionalStatus = (TextView) findViewById(R.id.optional_status);
+        mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
 
         // Button listeners
         findViewById(R.id.sign_in_button).setOnClickListener(this);
@@ -81,6 +88,11 @@ public class SignInActivity extends AppCompatActivity implements
         SignInButton signInButton = (SignInButton) findViewById(R.id.sign_in_button);
         signInButton.setSize(SignInButton.SIZE_STANDARD);
         // [END customize_button]
+
+        //If signing in was cancelled, it gets restarted
+        if(signingIn){
+            signIn();
+        }
     }
 
     @Override
@@ -92,12 +104,37 @@ public class SignInActivity extends AppCompatActivity implements
 
         Intent intent = getIntent();
         String message = intent.getStringExtra("EXTRA_MESSAGE");
-        if(currentUser != null) {
+        if (currentUser != null) {
             if (message != null && message.equals("signout")) {
-                //signOut();
-            }
-            else
+
+                final Thread thread = new Thread() {
+
+                    public void run() {
+
+                        if (!mGoogleApiClient.isConnecting() && !mGoogleApiClient.isConnected()) {
+                            mGoogleApiClient.connect();
+                        }
+
+                        while (!mGoogleApiClient.isConnected()) {
+                            try {
+                                Thread.currentThread().sleep(50);
+                            } catch (InterruptedException e) {
+
+                            }
+                        }
+                        if (mGoogleApiClient.isConnected()) {
+                            signOut();
+                        }
+                    }
+
+
+                };
+                thread.start();
+
+            } else
+
                 startDatabase();
+
         }
 
     }
@@ -105,7 +142,7 @@ public class SignInActivity extends AppCompatActivity implements
     @Override
     protected void onResume() {
         super.onResume();
-        hideProgressDialog();
+        //hideSignInMessage();
     }
 
     // [START onActivityResult]
@@ -136,7 +173,7 @@ public class SignInActivity extends AppCompatActivity implements
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
         Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
         // [START_EXCLUDE silent]
-        showProgressDialog();
+        showSignInMessage();
         // [END_EXCLUDE]
 
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
@@ -159,7 +196,8 @@ public class SignInActivity extends AppCompatActivity implements
                         }
 
                         // [START_EXCLUDE]
-                        hideProgressDialog();
+                        hideSignInMessage();
+                        signingIn = false;
                         // [END_EXCLUDE]
                     }
                 });
@@ -167,8 +205,17 @@ public class SignInActivity extends AppCompatActivity implements
     // [END auth_with_google]
 
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState){
+        super.onSaveInstanceState(outState);
+
+        outState.putBoolean("signingIn", signingIn);
+
+    }
+
     // [START signIn]
     private void signIn() {
+        signingIn = true;
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
@@ -201,39 +248,32 @@ public class SignInActivity extends AppCompatActivity implements
     }
 
 
-
-
     private void startDatabase() {
 
         startActivity(new Intent(this, DatabaseActivity.class));
     }
 
 
-    private void showProgressDialog() {
-        if (mProgressDialog == null) {
-            mProgressDialog = new ProgressDialog(this);
-            mProgressDialog.setMessage(getString(R.string.loading));
-            mProgressDialog.setIndeterminate(true);
-        }
+    private void showSignInMessage() {
 
-        mProgressDialog.show();
+        mOptionalStatus.setText(getString(R.string.signing_in));
+        mOptionalStatus.setVisibility(View.VISIBLE);
+        mProgressBar.setVisibility(View.VISIBLE);
+
     }
 
-    private void hideProgressDialog() {
-        if (mProgressDialog != null && mProgressDialog.isShowing()) {
-            mProgressDialog.hide();
-        }
+    private void hideSignInMessage() {
+        mProgressBar.setVisibility(View.GONE);
+        mOptionalStatus.setVisibility(View.GONE);
     }
 
     private void updateUI(FirebaseUser user) {
-        hideProgressDialog();
+        hideSignInMessage();
         if (user != null) {
-            mStatusTextView.setText(getString(R.string.signed_in_fmt, user.getEmail()));
 
             findViewById(R.id.sign_in_button).setVisibility(View.GONE);
             findViewById(R.id.sign_out_and_disconnect).setVisibility(View.VISIBLE);
         } else {
-            mStatusTextView.setText(R.string.signed_out);
 
             findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
             findViewById(R.id.sign_out_and_disconnect).setVisibility(View.GONE);

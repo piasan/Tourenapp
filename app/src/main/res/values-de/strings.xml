@@ -78,4 +78,5 @@
     <string name="noStations">Keine Stationen</string>
     <string name="add_photo">Foto hinzufügen</string>
     <string name="tours_with_tags">"Nur Touren mit folgenen Tags anzeigen: "</string>
+    <string name="signing_out">Melde ab…</string>
 </resources>
