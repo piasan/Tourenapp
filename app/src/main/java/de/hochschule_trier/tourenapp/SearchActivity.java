@@ -18,7 +18,7 @@ import java.util.ArrayList;
 public class SearchActivity extends AppCompatActivity implements View.OnClickListener {
 
 
-    private int radius;
+    private String radius;
     private String posOrder;
     private String posAscDesc;
 
@@ -46,8 +46,8 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
 
         Intent intent = getIntent();
 
-        String r = intent.getStringExtra("Radius");
-        radiusText.setText(r);
+        radius = intent.getStringExtra("Radius");
+        radiusText.setText(radius);
     }
 
 
@@ -171,7 +171,7 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
 
             case R.id.search_button:
 
-                radius = Integer.parseInt(radiusText.getText().toString());
+                radius = radiusText.getText().toString();
 
                 tags = new ArrayList<>();
 

@@ -62,6 +62,7 @@
             android:layout_height="wrap_content"
             android:visibility="gone"
             android:indeterminate="true"
+            android:indeterminateBehavior="cycle"
             tools:visibility="visible" />
 
     </LinearLayout>

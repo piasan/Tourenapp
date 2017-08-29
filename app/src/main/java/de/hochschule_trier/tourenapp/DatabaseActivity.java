@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -67,6 +68,8 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
     private TourNameAdapter tourNameAdapter;
     private ListView listView;
 
+    private LinearLayout loadingLayout;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +81,6 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
-
         // Buttons
         findViewById(R.id.sign_out_button).setOnClickListener(this);
         findViewById(R.id.new_tour_button).setOnClickListener(this);
@@ -87,6 +89,8 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
 
         // Text Field
         editRadius = (EditText) findViewById(R.id.radiusText);
+
+        loadingLayout = (LinearLayout) findViewById(R.id.loadingLayout);
 
         touren = new ArrayList<>();
         resultList = new ArrayList<>();
@@ -159,6 +163,7 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
             used = true;
         } else {
 
+            loadingLayout.setVisibility(View.VISIBLE);
             radius = Integer.parseInt(editRadius.getText().toString()) * 1000;
             checkLocation();
         }
@@ -280,6 +285,9 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
 
     public void loadDatabase(int r, final String orderBy, final String direction, final ArrayList<String> tags) {
 
+        tourNameAdapter.clear();
+        loadingLayout.setVisibility(View.VISIBLE);
+
 
         radius = r;
 
@@ -364,6 +372,7 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
                                     }
 
 
+                                    loadingLayout.setVisibility(View.GONE);
                                     tourNameAdapter.notifyDataSetChanged();
 
                                 }
@@ -424,7 +433,8 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
 
                 if (resultCode == RESULT_OK) {
 
-                    int r = data.getIntExtra("Radius", 10) * 1000;
+                    String r = data.getStringExtra("Radius");
+                    radius = Integer.parseInt(r)*1000;
                     direction = data.getStringExtra("Direction");
                     orderBy = data.getStringExtra("OrderBy");
                     tags = data.getStringArrayListExtra("TAGS");

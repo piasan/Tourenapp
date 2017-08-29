@@ -27,10 +27,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
-/**
- * Activity to demonstrate basic retrieval of the Google user's ID, email address, and basic
- * profile.
- */
+
 public class SignInActivity extends AppCompatActivity implements
         GoogleApiClient.OnConnectionFailedListener,
         View.OnClickListener {
@@ -65,29 +62,26 @@ public class SignInActivity extends AppCompatActivity implements
         findViewById(R.id.sign_in_button).setOnClickListener(this);
         findViewById(R.id.sign_out_button).setOnClickListener(this);
 
-        // [START config_signin]
+
         // Configure Google Sign In
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken("752765139307-0qo3it8433oh9cp4j8h6jdgb2n59j3ci.apps.googleusercontent.com")
                 .requestEmail()
                 .build();
-        // [END config_signin]
+
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
-        // [START initialize_auth]
         mAuth = FirebaseAuth.getInstance();
-        // [END initialize_auth]
 
 
-        // [START customize_button]
-        // Set the dimensions of the sign-in button.
+
         SignInButton signInButton = (SignInButton) findViewById(R.id.sign_in_button);
         signInButton.setSize(SignInButton.SIZE_STANDARD);
-        // [END customize_button]
+
 
         //If signing in was cancelled, it gets restarted
         if(signingIn){
@@ -142,16 +136,16 @@ public class SignInActivity extends AppCompatActivity implements
     @Override
     protected void onResume() {
         super.onResume();
-        //hideSignInMessage();
     }
 
-    // [START onActivityResult]
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
+
+            showSignInMessage();
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             if (result.isSuccess()) {
                 // Google Sign In was successful, authenticate with Firebase
@@ -159,22 +153,19 @@ public class SignInActivity extends AppCompatActivity implements
                 firebaseAuthWithGoogle(account);
             } else {
                 // Google Sign In failed, update UI appropriately
-                // [START_EXCLUDE]
                 Toast.makeText(SignInActivity.this, "Authentication failed.",
                         Toast.LENGTH_SHORT).show();
                 updateUI(null);
-                // [END_EXCLUDE]
             }
         }
     }
-    // [END onActivityResult]
 
-    // [START auth_with_google]
+    // START auth_with_google
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
         Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
-        // [START_EXCLUDE silent]
+
         showSignInMessage();
-        // [END_EXCLUDE]
+
 
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mAuth.signInWithCredential(credential)
@@ -195,14 +186,12 @@ public class SignInActivity extends AppCompatActivity implements
                             updateUI(null);
                         }
 
-                        // [START_EXCLUDE]
+
                         hideSignInMessage();
                         signingIn = false;
-                        // [END_EXCLUDE]
                     }
                 });
     }
-    // [END auth_with_google]
 
 
     @Override
@@ -213,16 +202,16 @@ public class SignInActivity extends AppCompatActivity implements
 
     }
 
-    // [START signIn]
+    //START signIn
     private void signIn() {
         signingIn = true;
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
-    // [END signIn]
 
 
-    // [START signOut]
+
+    //START signOut
     private void signOut() {
 
         // Firebase sign out
@@ -237,7 +226,6 @@ public class SignInActivity extends AppCompatActivity implements
                     }
                 });
     }
-    // [END signOut]
 
 
     @Override
