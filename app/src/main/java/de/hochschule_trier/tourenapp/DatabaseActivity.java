@@ -269,10 +269,20 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
                                     }
                                 };
 
+
                                 //noinspection MissingPermission
                                 locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
                                         1000,
                                         0, locationListener);
+                                //noinspection MissingPermission
+                                locationManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER,
+                                        1000,
+                                        0, locationListener);
+                                //noinspection MissingPermission
+                                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+                                        1000,
+                                        0, locationListener);
+
 
 
                             }

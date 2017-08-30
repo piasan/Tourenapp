@@ -42,7 +42,7 @@ public class NavigationActivity extends FragmentActivity implements
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener,
         SensorEventListener,
-        View.OnClickListener{
+        View.OnClickListener {
 
     private final static String TAG = "NAVIGATION_ACTIVITY";
 
@@ -100,6 +100,16 @@ public class NavigationActivity extends FragmentActivity implements
         stationWaypoints = stationWaypointWrapper.getWaypoints();
         stations = stationWrapper.getStations();
 
+        //connect Station and Waypoint information
+        new Thread() {
+            public void run() {
+
+                addStations();
+
+            }
+        };
+
+
         tourID = getIntent().getStringExtra("TourID");
 
 
@@ -107,25 +117,38 @@ public class NavigationActivity extends FragmentActivity implements
         mDatabase = database.getReference();
 
         if (mGoogleApiClient == null)
+
             buildGoogleApiClient();
+
         createLocationRequest();
 
-        if (!mGoogleApiClient.isConnected() || !mGoogleApiClient.isConnecting() && !requestProgress) {
+        if (!mGoogleApiClient.isConnected() || !mGoogleApiClient.isConnecting() && !requestProgress)
+
+        {
             requestProgress = true;
             mGoogleApiClient.connect();
         }
 
-        mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        mSensorManager = (SensorManager)
+
+                getSystemService(SENSOR_SERVICE);
+
         accelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         magnetometer = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
 
-        startTour = (Button) findViewById(R.id.startTour);
+        startTour = (Button)
+
+                findViewById(R.id.startTour);
         startTour.setOnClickListener(this);
-        cancelTour = (Button) findViewById(R.id.cancelTour);
+        cancelTour = (Button)
+
+                findViewById(R.id.cancelTour);
         cancelTour.setOnClickListener(this);
 
 
-        if (savedInstanceState != null) {
+        if (savedInstanceState != null)
+
+        {
             latitude = savedInstanceState.getDouble("Latitude");
             longitude = savedInstanceState.getDouble("Longitude");
             tilt = savedInstanceState.getFloat("Tilt");
@@ -138,6 +161,7 @@ public class NavigationActivity extends FragmentActivity implements
             }
 
         } else {
+
             latitude = waypoints.get(0).getLatitude();
             longitude = waypoints.get(0).getLongitude();
             tilt = 0;
@@ -240,6 +264,14 @@ public class NavigationActivity extends FragmentActivity implements
                             new LatLng(latitude, longitude)));
         }
 
+        //Add Marker to first waypoint
+        mMap.addMarker(new MarkerOptions()
+                .position(new LatLng(
+                        waypoints.get(0).getLatitude(),
+                        waypoints.get(0).getLongitude()))
+                .title("Start")
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
+
 
         for (int z = 0; z < waypoints.size(); z++) {
 
@@ -255,6 +287,23 @@ public class NavigationActivity extends FragmentActivity implements
                         .radius(0.1)
                         .strokeWidth(10)
                         .strokeColor(Color.BLUE));
+
+            }
+
+            if(waypoints.get(z).getComment() != null){
+
+                if(waypoints.get(z).getComment().equals("Station")){
+
+                } else {
+                    //Add Marker to first waypoint
+                    mMap.addMarker(new MarkerOptions()
+                            .position(new LatLng(
+                                    waypoints.get(z).getLatitude(),
+                                    waypoints.get(z).getLongitude()))
+                            .title(getResources().getString(R.string.comment))
+                            .snippet(waypoints.get(z).getComment())
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.comment)));
+                }
 
             }
 
@@ -307,14 +356,13 @@ public class NavigationActivity extends FragmentActivity implements
         if (!started) {
             if (isInRange(waypoints.get(0))) {
                 startTour.setEnabled(true);
-            }
-            else startTour.setEnabled(false);
+            } else startTour.setEnabled(false);
         }
 
 
     }
 
-    public void addStations(){
+    public void addStations() {
 
     }
 
@@ -381,9 +429,9 @@ public class NavigationActivity extends FragmentActivity implements
     }
 
     @Override
-    public void onClick(View v){
+    public void onClick(View v) {
 
-        switch (v.getId()){
+        switch (v.getId()) {
 
             case R.id.startTour:
 
