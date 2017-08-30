@@ -45,6 +45,7 @@
     <string name="station">Station</string>
     <string name="add_photo">Add photo</string>
     <string name="remove_photo">Remove photo</string>
+    <string name="start_tour">Start tour</string>
 
     <!-- TextView labels -->
     <string name="tour_name">Tour Name</string>

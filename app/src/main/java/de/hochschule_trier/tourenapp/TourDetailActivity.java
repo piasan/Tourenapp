@@ -92,6 +92,7 @@ public class TourDetailActivity extends AppCompatActivity implements View.OnClic
         findViewById(R.id.rate).setOnClickListener(this);
         findViewById(R.id.ok_button).setOnClickListener(this);
         findViewById(R.id.cancel_button).setOnClickListener(this);
+        findViewById(R.id.buttonStartTour).setOnClickListener(this);
         loadMore.setOnClickListener(this);
 
         // Get an instance of the database
@@ -508,6 +509,19 @@ public class TourDetailActivity extends AppCompatActivity implements View.OnClic
                     mapsIntent.putExtra("WPList", wrapper);
                     mapsIntent.putExtra("TourID", tourID);
                     startActivity(mapsIntent);
+                }
+                break;
+
+            case R.id.buttonStartTour:
+
+                if (WPComplete) {
+
+                    WaypointWrapper wrapper = new WaypointWrapper(waypoints);
+
+                    Intent navigationIntent = new Intent(this, NavigationActivity.class);
+                    navigationIntent.putExtra("WPList", wrapper);
+                    navigationIntent.putExtra("TourID", tourID);
+                    startActivity(navigationIntent);
                 }
                 break;
 

@@ -38,6 +38,11 @@
         <activity android:name=".MapsActivity" />
 
         <activity
+            android:name=".NavigationActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboardHidden|orientation|screenSize"/>
+
+        <activity
             android:name=".TourDetailActivity"
             android:windowSoftInputMode="adjustResize|stateUnchanged" />
 

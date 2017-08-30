@@ -3,8 +3,6 @@ package de.hochschule_trier.tourenapp;
 import android.graphics.Color;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -65,8 +63,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
 
         // Add waypoints and draw a polyline
-
         PolylineOptions options = new PolylineOptions().width(5).color(Color.BLUE).geodesic(false);
+
+
 
         //Add Marker to first waypoint
         mMap.addMarker(new MarkerOptions()
