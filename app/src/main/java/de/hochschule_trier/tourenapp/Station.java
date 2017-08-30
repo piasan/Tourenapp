@@ -6,13 +6,16 @@ public class Station {
     private String description;
     private String imageURL;
     private Mission mission;
+    private Waypoint waypoint;
+    private String id;
 
     public Station(){}
 
-    public Station (String name, String description){
+    public Station (String name, String description, String id){
 
         this.name = name;
         this.description = description;
+        this.id = id;
 
     }
 
@@ -33,6 +36,13 @@ public class Station {
         return mission;
     }
 
+    public Waypoint getWaypoint(){
+        return waypoint;
+    }
+
+    public String getId(){
+        return id;
+    }
 
     //Setters
     public void setDescription(String description) {
@@ -49,6 +59,14 @@ public class Station {
 
     public void setMission (Mission mission){
         this.mission = mission;
+    }
+
+    public void setWaypoint (Waypoint wp){
+        this.waypoint = wp;
+    }
+
+    public void setId(String id){
+        this.id = id;
     }
 
 }

@@ -1,6 +1,7 @@
 package de.hochschule_trier.tourenapp;
 
-
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -9,16 +10,16 @@ import android.hardware.SensorManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
-import android.widget.ImageView;
+import android.view.View;
+import android.widget.Button;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -30,11 +31,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -43,12 +41,15 @@ public class NavigationActivity extends FragmentActivity implements
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener,
-        SensorEventListener {
+        SensorEventListener,
+        View.OnClickListener{
 
     private final static String TAG = "NAVIGATION_ACTIVITY";
 
     private GoogleMap mMap;
     private ArrayList<Waypoint> waypoints;
+    private ArrayList<Waypoint> stationWaypoints;
+    private ArrayList<Station> stations;
     private FirebaseDatabase database;
     private DatabaseReference mDatabase;
 
@@ -71,10 +72,15 @@ public class NavigationActivity extends FragmentActivity implements
 
     private double latitude;
     private double longitude;
+    private Location currentLocation;
     private float tilt;
     private float bearing;
     private float zoom;
 
+    private boolean started;
+
+    private Button startTour;
+    private Button cancelTour;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,7 +93,12 @@ public class NavigationActivity extends FragmentActivity implements
         mapFragment.getMapAsync(this);
 
         WaypointWrapper wrapper = (WaypointWrapper) getIntent().getSerializableExtra("WPList");
+        WaypointWrapper stationWaypointWrapper
+                = (WaypointWrapper) getIntent().getSerializableExtra("StationWPList");
+        StationWrapper stationWrapper = (StationWrapper) getIntent().getSerializableExtra("StationList");
         waypoints = wrapper.getWaypoints();
+        stationWaypoints = stationWaypointWrapper.getWaypoints();
+        stations = stationWrapper.getStations();
 
         tourID = getIntent().getStringExtra("TourID");
 
@@ -108,6 +119,11 @@ public class NavigationActivity extends FragmentActivity implements
         accelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         magnetometer = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
 
+        startTour = (Button) findViewById(R.id.startTour);
+        startTour.setOnClickListener(this);
+        cancelTour = (Button) findViewById(R.id.cancelTour);
+        cancelTour.setOnClickListener(this);
+
 
         if (savedInstanceState != null) {
             latitude = savedInstanceState.getDouble("Latitude");
@@ -115,12 +131,19 @@ public class NavigationActivity extends FragmentActivity implements
             tilt = savedInstanceState.getFloat("Tilt");
             zoom = savedInstanceState.getFloat("Zoom");
             bearing = savedInstanceState.getFloat("Bearing");
+            started = savedInstanceState.getBoolean("Started");
+            if (started) {
+                startTour.setVisibility(View.GONE);
+                cancelTour.setVisibility(View.VISIBLE);
+            }
+
         } else {
             latitude = waypoints.get(0).getLatitude();
             longitude = waypoints.get(0).getLongitude();
             tilt = 0;
             zoom = 18;
             bearing = 0;
+            started = false;
         }
 
     }
@@ -141,12 +164,14 @@ public class NavigationActivity extends FragmentActivity implements
         mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
     }
 
+    @Override
     protected void onResume() {
         super.onResume();
         mSensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_UI);
         mSensorManager.registerListener(this, magnetometer, SensorManager.SENSOR_DELAY_UI);
     }
 
+    @Override
     protected void onPause() {
         super.onPause();
         mSensorManager.unregisterListener(this);
@@ -161,6 +186,7 @@ public class NavigationActivity extends FragmentActivity implements
         outState.putFloat("Tilt", tilt);
         outState.putFloat("Bearing", bearing);
         outState.putFloat("Zoom", zoom);
+        outState.putBoolean("Started", started);
 
     }
 
@@ -261,6 +287,7 @@ public class NavigationActivity extends FragmentActivity implements
     @Override
     public void onLocationChanged(Location location) {
 
+        currentLocation = location;
         latitude = location.getLatitude();
         longitude = location.getLongitude();
 
@@ -276,8 +303,34 @@ public class NavigationActivity extends FragmentActivity implements
 
 
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
+        if (!started) {
+            if (isInRange(waypoints.get(0))) {
+                startTour.setEnabled(true);
+            }
+            else startTour.setEnabled(false);
+        }
+
+
     }
 
+    public void addStations(){
+
+    }
+
+
+    public boolean isInRange(Waypoint wp) {
+
+        Location waypoint = new Location("WP");
+        waypoint.setLatitude(wp.getLatitude());
+        waypoint.setLongitude(wp.getLongitude());
+        float distance = currentLocation.distanceTo(waypoint);
+
+        if (distance < 30)
+            return true;
+
+        else return false;
+    }
 
     @Override
     public void onConnectionSuspended(int i) {
@@ -325,5 +378,47 @@ public class NavigationActivity extends FragmentActivity implements
 
             }
         }
+    }
+
+    @Override
+    public void onClick(View v){
+
+        switch (v.getId()){
+
+            case R.id.startTour:
+
+                startTour.setVisibility(View.GONE);
+                cancelTour.setVisibility(View.VISIBLE);
+                started = true;
+                break;
+
+            case R.id.cancelTour:
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage(R.string.cancel_tour_message)
+                        .setTitle(R.string.cancel_rec_title);
+
+                builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface dialog, int id) {
+
+                        finish();
+
+                    }
+                });
+
+                builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+
+
+                    }
+                });
+
+                AlertDialog dialog = builder.create();
+                dialog.show();
+
+        }
+
+
     }
 }

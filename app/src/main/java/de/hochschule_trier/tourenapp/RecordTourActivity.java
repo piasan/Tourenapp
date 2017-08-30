@@ -181,7 +181,7 @@ public class RecordTourActivity extends AppCompatActivity implements View.OnClic
                         Waypoint wp = new Waypoint(stationLocation.getLatitude(), stationLocation.getLongitude(),
                                 "Station", stationID, false);
 
-                        Station station = new Station(stationName, stationDescription);
+                        Station station = new Station(stationName, stationDescription, stationID);
 
                         if(imageName != null){
                             station.setImageURL(imageName);

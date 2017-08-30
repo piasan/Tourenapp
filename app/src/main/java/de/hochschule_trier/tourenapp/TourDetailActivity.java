@@ -48,6 +48,7 @@ public class TourDetailActivity extends AppCompatActivity implements View.OnClic
     private ArrayList<Comment> comments;
     private ArrayList<String> tags;
     private ArrayList<Station> stations;
+    private ArrayList<Waypoint> stationWaypoints;
 
     private DatabaseReference mDatabase;
     private FirebaseUser user;
@@ -61,6 +62,7 @@ public class TourDetailActivity extends AppCompatActivity implements View.OnClic
 
 
     private boolean WPComplete;
+    private boolean stationComplete;
 
     private static final String TAG = "TourDetailActivity";
 
@@ -243,11 +245,16 @@ public class TourDetailActivity extends AppCompatActivity implements View.OnClic
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 waypoints = new ArrayList<>();
+                stationWaypoints = new ArrayList<>();
                 WPComplete = false;
 
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Waypoint waypoint = snapshot.getValue(Waypoint.class);
                     waypoints.add(waypoint);
+
+                    if(waypoint.getStationID() != null){
+                        stationWaypoints.add(waypoint);
+                    }
 
                 }
 
@@ -348,6 +355,8 @@ public class TourDetailActivity extends AppCompatActivity implements View.OnClic
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
+                stationComplete = false;
+
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     station = snapshot.getValue(Station.class);
 
@@ -358,6 +367,7 @@ public class TourDetailActivity extends AppCompatActivity implements View.OnClic
 
                 }
 
+                stationComplete = true;
                 addStations();
 
             }
@@ -514,12 +524,16 @@ public class TourDetailActivity extends AppCompatActivity implements View.OnClic
 
             case R.id.buttonStartTour:
 
-                if (WPComplete) {
+                if (WPComplete && stationComplete) {
 
                     WaypointWrapper wrapper = new WaypointWrapper(waypoints);
+                    WaypointWrapper stationWaypointWrapper = new WaypointWrapper(stationWaypoints);
+                    StationWrapper stationWrapper = new StationWrapper(stations);
 
                     Intent navigationIntent = new Intent(this, NavigationActivity.class);
                     navigationIntent.putExtra("WPList", wrapper);
+                    navigationIntent.putExtra("StationWPList", stationWaypointWrapper);
+                    navigationIntent.putExtra("StationList", stationWrapper);
                     navigationIntent.putExtra("TourID", tourID);
                     startActivity(navigationIntent);
                 }
