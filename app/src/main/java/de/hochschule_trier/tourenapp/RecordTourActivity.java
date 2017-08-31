@@ -183,7 +183,7 @@ public class RecordTourActivity extends AppCompatActivity implements View.OnClic
 
                         Station station = new Station(stationName, stationDescription, stationID);
 
-                        if(imageName != null){
+                        if (imageName != null) {
                             station.setImageURL(imageName);
                         }
 
@@ -313,6 +313,16 @@ public class RecordTourActivity extends AppCompatActivity implements View.OnClic
 
         }
 
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        if (!recording)
+            super.onBackPressed();
+
+        else
+            Toast.makeText(this, getResources().getString(R.string.no_back_button), Toast.LENGTH_SHORT).show();
     }
 
 

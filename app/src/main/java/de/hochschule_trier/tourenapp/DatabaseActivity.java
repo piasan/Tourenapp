@@ -284,7 +284,6 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
                                         0, locationListener);
 
 
-
                             }
                         }
                     });
@@ -444,7 +443,10 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
                 if (resultCode == RESULT_OK) {
 
                     String r = data.getStringExtra("Radius");
-                    radius = Integer.parseInt(r)*1000;
+                    if (r.length() <= 0) {
+                        r = "10";
+                    }
+                    radius = Integer.parseInt(r) * 1000;
                     direction = data.getStringExtra("Direction");
                     orderBy = data.getStringExtra("OrderBy");
                     tags = data.getStringArrayListExtra("TAGS");
@@ -463,7 +465,10 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
     // On Click Listener
     @Override
     public void onClick(View v) {
+
+        String r;
         switch (v.getId()) {
+
 
             case R.id.new_tour_button:
 
@@ -485,14 +490,19 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
             case R.id.refresh_button:
 
                 used = true;
-                radius = Integer.parseInt(editRadius.getText().toString()) * 1000;
+                r = editRadius.getText().toString();
+                if(r.length() <= 0){
+                    r = "10";
+                    editRadius.setText("10");
+                }
+                radius = Integer.parseInt(r) * 1000;
                 checkLocation();
                 break;
 
             case R.id.searchTextView:
 
                 Intent searchIntent = new Intent(this, SearchActivity.class);
-                String r = editRadius.getText().toString();
+                r = editRadius.getText().toString();
                 searchIntent.putExtra("Radius", r);
 
                 startActivityForResult(searchIntent, SEARCH_REQUEST_CODE);
