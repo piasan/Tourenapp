@@ -82,4 +82,5 @@
     <string name="start_tour">Tour starten</string>
     <string name="cancel_tour">Tour abbrechen</string>
     <string name="cancel_tour_message">Soll die Tour abgebrochen werden? Der Fortschritt wird nicht gespeichert.</string>
+    <string name="auth_failed">Anmeldung fehlgeschlagen</string>
 </resources>

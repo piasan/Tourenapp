@@ -247,6 +247,7 @@ public class NavigationActivity extends FragmentActivity implements
         mMap.getUiSettings().setZoomControlsEnabled(true);
         mMap.getUiSettings().setZoomGesturesEnabled(true);
         mMap.getUiSettings().setCompassEnabled(true);
+        mMap.getUiSettings().setMapToolbarEnabled(false);
         mMap.setMaxZoomPreference(20);
         mMap.setMinZoomPreference(14);
 

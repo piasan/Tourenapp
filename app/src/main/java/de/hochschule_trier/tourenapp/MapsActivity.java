@@ -62,6 +62,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
+
+        mMap.getUiSettings().setMapToolbarEnabled(false);
+
         // Add waypoints and draw a polyline
         PolylineOptions options = new PolylineOptions().width(5).color(Color.BLUE).geodesic(false);
 

@@ -120,6 +120,7 @@
     <string name="no_mission">Mission info missing</string>
     <string name="attempts_warning">Setting limited amount of attempts for missions that unlock another part of the tour is not recommended, because  users that run out of attempts aren\'t able to complete the tour! </string>
     <string name="photo_error">Photo couldn\'t be saved</string>
+    <string name="auth_failed">Authentication failed.</string>
 
     <!-- Content Description for images -->
     <string name="desc_google_icon">Google Logo</string>
