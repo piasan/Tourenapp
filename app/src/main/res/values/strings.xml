@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Tourenapp</string>
+    <string name="app_name">YourTour</string>
     <string name="title_text">Google Sign-In</string>
 
     <!-- Sign-in status messages -->
@@ -47,6 +47,10 @@
     <string name="remove_photo">Remove photo</string>
     <string name="start_tour">Start Tour</string>
     <string name="cancel_tour">Cancel Tour</string>
+    <string name="end_tour">Finish Tour</string>
+    <string name="end_station">Finish Station</string>
+    <string name="show_station">Show Station</string>
+    <string name="show_mission">Show Mission</string>
 
     <!-- TextView labels -->
     <string name="tour_name">Tour Name</string>

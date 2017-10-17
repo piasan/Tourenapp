@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Tourenapp</string>
+    <string name="app_name">YourTour</string>
     <string name="loading">Lade…</string>
     <string name="sign_out">Ausloggen</string>
     <string name="signed_in">Angemeldet</string>
@@ -84,4 +84,8 @@
     <string name="cancel_tour_message">Soll die Tour abgebrochen werden? Der Fortschritt wird nicht gespeichert.</string>
     <string name="auth_failed">Anmeldung fehlgeschlagen</string>
     <string name="no_back_button">Um zurück zu gehen, bitte Aufzeichnung beenden oder abbrechen!</string>
+    <string name="end_station">Station abschließen</string>
+    <string name="end_tour">Tour abschließen</string>
+    <string name="show_station">Station anzeigen</string>
+    <string name="show_mission">Aufgabe anzeigen</string>
 </resources>

@@ -187,6 +187,8 @@ public class RecordTourActivity extends AppCompatActivity implements View.OnClic
                             station.setImageURL(imageName);
                         }
 
+                        mDatabase.child("Waypoints").child("Tour" + tourID).push().setValue(wp);
+                        mDatabase.child("Stations").child("Tour" + tourID).child(stationID).setValue(station);
 
                         if (data.getBooleanExtra("MISSION", false)) {
 
@@ -213,10 +215,6 @@ public class RecordTourActivity extends AppCompatActivity implements View.OnClic
                             mDatabase.child("Stations").child("Tour" + tourID)
                                     .child(stationID).child("Mission").setValue(mission);
                         }
-
-
-                        mDatabase.child("Waypoints").child("Tour" + tourID).push().setValue(wp);
-                        mDatabase.child("Stations").child("Tour" + tourID).child(stationID).setValue(station);
 
 
                     } else

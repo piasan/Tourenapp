@@ -1,44 +1,124 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:background="@color/bg_gray_main">
-
 
 
     <fragment
         android:id="@+id/mapView"
+        class="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        class="com.google.android.gms.maps.SupportMapFragment"
-        android:layout_marginBottom="70dp"/>
+        android:layout_marginBottom="70dp" />
+
+    <LinearLayout
+        android:id="@+id/stationLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_marginTop="50dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginBottom="100dp"
+        android:background="@drawable/border_light"
+        android:padding="20dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/stationName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="30sp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="20dp"
+            android:text="test"/>
+
+        <ImageView
+            android:id="@+id/stationImage"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="20dp"/>
+
+        <TextView
+            android:id="@+id/stationDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_horizontal"
+            android:weightSum="2">
+
+            <Button
+                android:id="@+id/showMission"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="@string/show_mission"/>
+
+            <Button
+                android:id="@+id/endStation"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="@string/end_station"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
 
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="70dp"
-        android:orientation="horizontal"
         android:layout_alignParentBottom="true"
         android:gravity="center_horizontal"
-        android:padding="10dp">
+        android:orientation="horizontal"
+        android:padding="10dp"
+        android:weightSum="2">
 
         <Button
             android:id="@+id/startTour"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/start_tour"
-            android:visibility="visible"
+            android:layout_weight="1"
+            android:alpha="1.0"
             android:enabled="false"
-            android:alpha="1.0"/>
+            android:text="@string/start_tour"
+            android:visibility="visible" />
+
+        <Button
+            android:id="@+id/endTour"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:enabled="false"
+            android:text="@string/end_tour"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/showStation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/show_station"
+            android:visibility="gone"
+            android:layout_weight="1"/>
 
         <Button
             android:id="@+id/cancelTour"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="@string/cancel_tour"
             android:visibility="gone" />
+
 
     </LinearLayout>
 

@@ -252,7 +252,7 @@ public class TourDetailActivity extends AppCompatActivity implements View.OnClic
                     Waypoint waypoint = snapshot.getValue(Waypoint.class);
                     waypoints.add(waypoint);
 
-                    if(waypoint.getStationID() != null){
+                    if (waypoint.getStationID() != null) {
                         stationWaypoints.add(waypoint);
                     }
 
@@ -427,7 +427,7 @@ public class TourDetailActivity extends AppCompatActivity implements View.OnClic
             //if station is unocking the rest of the tour, following stations will be hidden
             if (stations.get(i).getMission() != null) {
 
-                if (stations.get(i).getMission().isUnlocking())
+                if (stations.get(i).getMission().isUnlocking()) {
 
                     for (int j = i + 1; j < stations.size(); j++) {
 
@@ -451,15 +451,16 @@ public class TourDetailActivity extends AppCompatActivity implements View.OnClic
                         stationList.addView(stationView);
 
                     }
+                    break;
+                }
 
-                break;
+
             }
 
 
         }
-
-
     }
+
 
     public void getAverageRating() {
 

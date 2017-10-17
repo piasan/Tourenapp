@@ -1,7 +1,6 @@
 package de.hochschule_trier.tourenapp;
 
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -14,7 +13,12 @@ import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -33,6 +37,10 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -52,6 +60,8 @@ public class NavigationActivity extends FragmentActivity implements
     private ArrayList<Station> stations;
     private FirebaseDatabase database;
     private DatabaseReference mDatabase;
+
+    private FirebaseStorage storage;
 
     private String tourID;
 
@@ -78,9 +88,17 @@ public class NavigationActivity extends FragmentActivity implements
     private float zoom;
 
     private boolean started;
+    private int stationNumber;
 
     private Button startTour;
     private Button cancelTour;
+    private Button showStation;
+    private Button endTour;
+    private Button finishTour;
+    private Button showMission;
+    private Button endStation;
+
+    private LinearLayout stationLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,21 +118,14 @@ public class NavigationActivity extends FragmentActivity implements
         stationWaypoints = stationWaypointWrapper.getWaypoints();
         stations = stationWrapper.getStations();
 
-        //connect Station and Waypoint information
-        new Thread() {
-            public void run() {
-
-                addStations();
-
-            }
-        };
-
 
         tourID = getIntent().getStringExtra("TourID");
 
 
         database = FirebaseDatabase.getInstance();
         mDatabase = database.getReference();
+
+        storage = FirebaseStorage.getInstance();
 
         if (mGoogleApiClient == null)
 
@@ -136,14 +147,16 @@ public class NavigationActivity extends FragmentActivity implements
         accelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         magnetometer = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
 
-        startTour = (Button)
-
-                findViewById(R.id.startTour);
+        startTour = (Button) findViewById(R.id.startTour);
         startTour.setOnClickListener(this);
-        cancelTour = (Button)
-
-                findViewById(R.id.cancelTour);
+        cancelTour = (Button) findViewById(R.id.cancelTour);
         cancelTour.setOnClickListener(this);
+        endTour = (Button) findViewById(R.id.endTour);
+        endTour.setOnClickListener(this);
+        showStation = (Button) findViewById(R.id.showStation);
+        showStation.setOnClickListener(this);
+        endStation = (Button) findViewById(R.id.endStation);
+        endStation.setOnClickListener(this);
 
 
         if (savedInstanceState != null)
@@ -158,7 +171,22 @@ public class NavigationActivity extends FragmentActivity implements
             if (started) {
                 startTour.setVisibility(View.GONE);
                 cancelTour.setVisibility(View.VISIBLE);
+
+                if (stations.size() > stationNumber) {
+
+                    if (isInRange(stations.get(stationNumber).getWaypoint())) {
+                        showStation.setEnabled(true);
+                    } else showStation.setEnabled(false);
+
+                }
+
+                //no more stations available
+                else if (isInRange(waypoints.get(waypoints.size() - 1))) {
+                    endTour.setEnabled(true);
+                } else
+                    endTour.setEnabled(false);
             }
+            stationNumber = savedInstanceState.getInt("StationNumber");
 
         } else {
 
@@ -168,6 +196,7 @@ public class NavigationActivity extends FragmentActivity implements
             zoom = 18;
             bearing = 0;
             started = false;
+            stationNumber = 0;
         }
 
     }
@@ -211,6 +240,7 @@ public class NavigationActivity extends FragmentActivity implements
         outState.putFloat("Bearing", bearing);
         outState.putFloat("Zoom", zoom);
         outState.putBoolean("Started", started);
+        outState.putInt("StationNumber", stationNumber);
 
     }
 
@@ -291,9 +321,9 @@ public class NavigationActivity extends FragmentActivity implements
 
             }
 
-            if(waypoints.get(z).getComment() != null){
+            if (waypoints.get(z).getComment() != null) {
 
-                if(waypoints.get(z).getComment().equals("Station")){
+                if (waypoints.get(z).getComment().equals("Station")) {
 
                 } else {
                     //Add Marker to first waypoint
@@ -308,10 +338,24 @@ public class NavigationActivity extends FragmentActivity implements
 
             }
 
+            if (waypoints.get(z).getImageURL() != null){
+                mMap.addMarker(new MarkerOptions()
+                        .position(new LatLng(
+                                waypoints.get(z).getLatitude(),
+                                waypoints.get(z).getLongitude()))
+                        .title(getResources().getString(R.string.photo))
+                        .snippet(waypoints.get(z).getComment())
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.photo_marker)));
+            }
+
             //check if current Waypoint unlocks another part of the tour. if it does hide the rest of the tour.
             if (waypoints.get(z).isUnlocking())
                 break;
         }
+
+        //connect Station and Waypoint information
+        addStations();
+
 
         mMap.addPolyline(options);
 
@@ -363,7 +407,32 @@ public class NavigationActivity extends FragmentActivity implements
 
     }
 
+    //Station information and Waypoints get connected
     public void addStations() {
+        for (int i = 0; i < stations.size(); i++) {
+
+            //station index and waypoint index should always be the same. Check anyway to prevent errors.
+            if (stations.get(i).getId().equals(stationWaypoints.get(i).getStationID())) {
+                stations.get(i).setWaypoint(stationWaypoints.get(i));
+            }
+
+        }
+
+        for (int i = 0; i < stations.size(); i++) {
+            Marker marker = mMap.addMarker(new MarkerOptions()
+                    .position(new LatLng(
+                            stationWaypoints.get(i).getLatitude(),
+                            stationWaypoints.get(i).getLongitude()))
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))
+                    .title(stations.get(i).getName())
+                    .snippet(stations.get(i).getDescription()));
+
+            if (stations.get(i).getMission() != null) {
+                if (stations.get(i).getMission().isUnlocking())
+                    break;
+            }
+        }
+
 
     }
 
@@ -437,6 +506,10 @@ public class NavigationActivity extends FragmentActivity implements
             case R.id.startTour:
 
                 startTour.setVisibility(View.GONE);
+                if (stations.size() > 0)
+                    showStation.setVisibility(View.VISIBLE);
+                else
+                    endTour.setVisibility(View.VISIBLE);
                 cancelTour.setVisibility(View.VISIBLE);
                 started = true;
                 break;
@@ -466,6 +539,46 @@ public class NavigationActivity extends FragmentActivity implements
                 AlertDialog dialog = builder.create();
                 dialog.show();
 
+                break;
+
+            case R.id.showStation:
+
+                stationLayout = (LinearLayout) findViewById(R.id.stationLayout);
+                stationLayout.setVisibility(View.VISIBLE);
+                TextView stationName = (TextView) findViewById(R.id.stationName);
+                stationName.setText(stations.get(stationNumber).getName());
+                TextView stationDescription = (TextView) findViewById(R.id.stationDescription);
+                stationDescription.setText(stations.get(stationNumber).getDescription());
+                if (stations.get(stationNumber).getImageURL() != null) {
+
+                    ImageView image = (ImageView) findViewById(R.id.stationImage);
+
+                    // Reference to an image file in Firebase Storage
+                    StorageReference storageRef = storage.getReference().child(stations.get(stationNumber).getImageURL());
+
+
+                    // Load the image using Glide
+                    Glide.with(this /* context */)
+                            .using(new FirebaseImageLoader())
+                            .load(storageRef)
+                            .into(image);
+                }
+
+
+
+                break;
+
+            case R.id.endTour:
+
+                finish();
+                break;
+
+            case R.id.endStation:
+
+                stationNumber++;
+                stationLayout.setVisibility(View.GONE);
+
+                break;
         }
 
 
