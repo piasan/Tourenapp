@@ -156,7 +156,7 @@ public class RecordTourActivity extends AppCompatActivity implements View.OnClic
 
                                     long indexNr = TourIndex.getIndex(waypoint.getLatitude(), waypoint.getLongitude());
 
-                                    createNewTour(tourName, tourDescription, user.getUid(), tags, indexNr);
+                                    createNewTour(indexNr, tourName, tourDescription, user.getUid(), tags);
 
                                     finish();
                                 }
@@ -313,15 +313,15 @@ public class RecordTourActivity extends AppCompatActivity implements View.OnClic
 
     }
 
-    private void createNewTour(String tourName, String tourDescription, String authorName, boolean[] tags, long indexNr) {
+    private void createNewTour(long indexNr, String tourName, String tourDescription, String authorName, boolean[] tags) {
 
         long timestamp = System.currentTimeMillis();
 
-        Tour tour = new Tour(tourName, authorName, timestamp, tourID, tourDescription, indexNr);
+        Tour tour = new Tour(tourName, authorName, timestamp, tourID, tourDescription);
 
         String[] tagList = getResources().getStringArray(R.array.tag_list);
 
-
+        mDatabase.child("TourIndex").child("Index-"+indexNr).child(tourID).setValue(tourID);
         mDatabase.child("Touren").child(tourID).setValue(tour);
 
         for (int i = 0; i < tags.length; i++) {

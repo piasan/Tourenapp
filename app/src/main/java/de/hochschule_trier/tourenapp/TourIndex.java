@@ -4,6 +4,27 @@ import android.location.Location;
 
 public class TourIndex {
 
+    Tour tour;
+
+    public String getTourID() {
+        return tourID;
+    }
+
+    public void setTourID(String tourID) {
+        this.tourID = tourID;
+    }
+
+    String tourID;
+
+    public Tour getTour(){
+        return tour;
+    }
+
+    public void setTour (Tour tour){
+        this.tour = tour;
+    }
+
+
     public static long getIndex(double latitude, double longitude) {
 
         //remove decimals
