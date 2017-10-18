@@ -32,6 +32,7 @@ public class GPSService extends Service implements
 
     private String tourID;
 
+
     //Location Manager
     private static final String TAG = "GPSService";
 

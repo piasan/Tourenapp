@@ -15,13 +15,14 @@ public class Tour implements Parcelable {
     private boolean active;
     private double averageRating;
     private String description;
+    private long indexNr;
 
 
     public Tour() {
     }
 
     //Constructor
-    public Tour(String tourName, String authorName, long timestamp, String tourID, String tourDescription) {
+    public Tour(String tourName, String authorName, long timestamp, String tourID, String tourDescription, long indexNr) {
         this.tourName = tourName;
         this.authorName = authorName;
         this.timestamp = timestamp;
@@ -29,6 +30,7 @@ public class Tour implements Parcelable {
         this.active = true;
         this.tourID = tourID;
         this.description = tourDescription;
+        this.indexNr = indexNr;
     }
 
     //Constructor from parcel
@@ -42,6 +44,7 @@ public class Tour implements Parcelable {
         this.active = parcel.readInt() != 0;
         this.averageRating = parcel.readDouble();
         this.description = parcel.readString();
+        this.indexNr = parcel.readLong();
 
     }
 
@@ -61,6 +64,7 @@ public class Tour implements Parcelable {
         dest.writeInt((active ? 1 : 0));
         dest.writeDouble(averageRating);
         dest.writeString(description);
+        dest.writeLong(indexNr);
     }
 
     public static final Parcelable.Creator<Tour> CREATOR
@@ -112,6 +116,10 @@ public class Tour implements Parcelable {
         return description;
     }
 
+    public long getIndexNr() {
+        return indexNr;
+    }
+
 
     //Setters
     public void setTourName(String tourName) {
@@ -148,6 +156,10 @@ public class Tour implements Parcelable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public void setIndexNr(long indexNr) {
+        this.indexNr = indexNr;
     }
 
 }

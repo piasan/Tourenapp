@@ -301,7 +301,7 @@ public class DatabaseActivity extends AppCompatActivity implements View.OnClickL
         radius = r;
 
         if (currentLocation != null) {
-            long index = TourIndex.getIndex(currentLocation);
+            long index = TourIndex.getIndex(currentLocation.getLatitude(), currentLocation.getLongitude());
         }
 
 

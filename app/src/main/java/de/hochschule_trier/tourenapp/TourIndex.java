@@ -4,11 +4,11 @@ import android.location.Location;
 
 public class TourIndex {
 
-    public static long getIndex(Location loc) {
+    public static long getIndex(double latitude, double longitude) {
 
         //remove decimals
-        double latitude = loc.getLatitude()*10;
-        double longitude = loc.getLongitude()*10;
+        latitude *= 10;
+        longitude *= 10;
 
         long index;
 

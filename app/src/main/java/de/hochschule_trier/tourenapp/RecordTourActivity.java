@@ -14,6 +14,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -21,8 +22,11 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -33,6 +37,7 @@ import java.util.Date;
 
 public class RecordTourActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private static final String TAG = "RECORD_TOUR_ACTIVITY";
     private static final int MY_PERMISSION_ACCESS_COARSE_LOCATION = 11;
     private static final int MY_PERMISSION_ACCESS_FINE_LOCATION = 12;
 
@@ -47,6 +52,7 @@ public class RecordTourActivity extends AppCompatActivity implements View.OnClic
     private StorageReference storageRef;
 
     private String tourID;
+    private Waypoint waypoint;
     private boolean recording;
 
     private Location commentLocation;
@@ -129,13 +135,41 @@ public class RecordTourActivity extends AppCompatActivity implements View.OnClic
 
                 if (resultCode == RESULT_OK) {
 
-                    String tourName = data.getStringExtra("TOUR_NAME");
-                    String tourDescription = data.getStringExtra("TOUR_DESCRIPTION");
-                    boolean[] tags = data.getBooleanArrayExtra("TAGS");
+                    final String tourName = data.getStringExtra("TOUR_NAME");
+                    final String tourDescription = data.getStringExtra("TOUR_DESCRIPTION");
+                    final boolean[] tags = data.getBooleanArrayExtra("TAGS");
 
-                    createNewTour(tourName, tourDescription, user.getUid(), tags);
+                    //get index nr for first waypoint
 
-                    finish();
+                    //Get first waypoint
+                    mDatabase.child("Waypoints").child("Tour" + tourID).limitToFirst(1).
+                            addListenerForSingleValueEvent(new ValueEventListener() {
+
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                    waypoint = new Waypoint(0, 0);
+
+                                    for (DataSnapshot snapshot1 : dataSnapshot.getChildren()) {
+                                        waypoint = snapshot1.getValue(Waypoint.class);
+                                    }
+
+                                    long indexNr = TourIndex.getIndex(waypoint.getLatitude(), waypoint.getLongitude());
+
+                                    createNewTour(tourName, tourDescription, user.getUid(), tags, indexNr);
+
+                                    finish();
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError error) {
+
+                                    // Failed to read value
+                                    Log.w(TAG, "Failed to read value.", error.toException());
+                                    finish();
+                                }
+                            });
+
 
                 }
 
@@ -279,11 +313,11 @@ public class RecordTourActivity extends AppCompatActivity implements View.OnClic
 
     }
 
-    private void createNewTour(String tourName, String tourDescription, String authorName, boolean[] tags) {
+    private void createNewTour(String tourName, String tourDescription, String authorName, boolean[] tags, long indexNr) {
 
         long timestamp = System.currentTimeMillis();
 
-        Tour tour = new Tour(tourName, authorName, timestamp, tourID, tourDescription);
+        Tour tour = new Tour(tourName, authorName, timestamp, tourID, tourDescription, indexNr);
 
         String[] tagList = getResources().getStringArray(R.array.tag_list);
 
